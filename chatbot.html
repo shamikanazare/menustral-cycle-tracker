@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sakhi · Health Assistant</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--pink:#ff6b9d;--purple:#b06bd6;--rose-deep:#c9427e;--text:#4a2340;--muted:#a5839a;--line:#f7dce9;--line-soft:#fbeaf3;--error:#e5484d;--green:#12b76a;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+body{font-family:'Outfit',system-ui,sans-serif;background:#fff7fb;color:var(--text);min-height:100vh;overflow:hidden;}
+.shell{display:flex;height:100vh;}
+
+/* SIDEBAR */
+.sidebar{width:236px;flex-shrink:0;background:linear-gradient(180deg,#fff8fc,#fff1f8);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:22px 16px 18px;overflow-y:auto;}
+.logo{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:700;color:#8e2b5c;padding:0 6px;margin-bottom:26px;}
+.logo-mark{width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,var(--pink),var(--purple));display:grid;place-items:center;box-shadow:0 8px 18px -6px rgba(255,107,157,.85);}
+.logo-mark svg{width:18px;height:18px;}
+.nav-section{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.2px;color:#c8a0ba;padding:0 10px;margin:14px 0 8px;}
+.nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:11px;font-size:13.5px;font-weight:500;color:#8a5c7c;text-decoration:none;cursor:pointer;transition:all .18s;margin-bottom:2px;}
+.nav-item svg{width:17px;height:17px;flex-shrink:0;}
+.nav-item:hover{background:#ffeef6;color:var(--rose-deep);}
+.nav-item.active{background:linear-gradient(100deg,#ffd6e8,#f2d5f7);color:#8e2b5c;font-weight:600;}
+.sidebar-foot{margin-top:auto;padding-top:18px;}
+.user-card{display:flex;align-items:center;gap:10px;padding:10px 11px;background:#fff;border:1px solid var(--line);border-radius:14px;}
+.user-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;display:grid;place-items:center;font-size:15px;font-weight:600;flex-shrink:0;}
+.user-meta{min-width:0;flex:1;}
+.user-name{font-size:13px;font-weight:600;color:#5c2a4c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-tag{font-size:10.5px;color:var(--muted);}
+.logout-btn{background:none;border:none;cursor:pointer;padding:6px;border-radius:8px;color:#c8a0ba;display:grid;place-items:center;}
+.logout-btn:hover{color:var(--error);background:#fff0f0;}
+.logout-btn svg{width:15px;height:15px;}
+.algo-panel{padding:14px 16px;margin:0 6px 14px;background:#fff;border:1px solid var(--line);border-radius:14px;}
+.algo-panel h4{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#c8a0ba;margin-bottom:9px;}
+.algo-row{display:flex;align-items:center;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#8a5c7c;padding:4px 0;}
+.algo-row strong{color:#5c2a4c;font-weight:600;}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;}
+.chat-head{display:flex;align-items:center;gap:14px;padding:20px 28px 16px;flex-shrink:0;border-bottom:1px solid var(--line-soft);}
+.bot-avatar{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--pink),var(--purple));display:grid;place-items:center;font-size:20px;box-shadow:0 10px 22px -8px rgba(255,107,157,.85);}
+.chat-head h1{font-size:19px;font-weight:600;color:#5c2a4c;margin-bottom:2px;}
+.chat-head p{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;}
+.online-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(18,183,106,.18);}
+.chat-head-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.mode-toggle{display:flex;padding:4px;background:#fff8fb;border:1px solid var(--line);border-radius:11px;gap:2px;}
+.mode-btn{padding:7px 13px;font-family:inherit;font-size:12px;font-weight:500;color:#8a5c7c;background:none;border:none;border-radius:8px;cursor:pointer;}
+.mode-btn.active{background:linear-gradient(100deg,#ffd6e8,#f2d5f7);color:#8e2b5c;font-weight:600;}
+.algo-badge{display:flex;align-items:center;gap:8px;padding:7px 12px;background:#fff;border:1px solid var(--line);border-radius:11px;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#8a5c7c;}
+.algo-badge.flash{background:linear-gradient(100deg,#e3f9ee,#d5f5e3);border-color:#a5e5c4;color:#0e8c50;}
+
+/* CHAT */
+.chat-body{flex:1;overflow-y:auto;padding:22px 28px;display:flex;flex-direction:column;gap:16px;}
+.chat-body::-webkit-scrollbar{width:8px;}
+.chat-body::-webkit-scrollbar-thumb{background:#f8c8dd;border-radius:99px;}
+.msg{display:flex;gap:10px;max-width:78%;animation:mi .35s cubic-bezier(.2,1,.4,1) both;}
+@keyframes mi{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+.msg.user{align-self:flex-end;flex-direction:row-reverse;}
+.msg.bot{align-self:flex-start;}
+.msg-avatar{width:32px;height:32px;border-radius:10px;flex-shrink:0;display:grid;place-items:center;font-size:14px;font-weight:600;}
+.msg.bot .msg-avatar{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;}
+.msg.user .msg-avatar{background:#ffe6f2;color:#c9427e;}
+.msg-bubble{padding:12px 16px;border-radius:16px;font-size:13.5px;line-height:1.55;}
+.msg.bot .msg-bubble{background:#fff;border:1px solid var(--line);color:var(--text);border-top-left-radius:6px;box-shadow:0 6px 16px -10px rgba(201,66,126,.35);}
+.msg.user .msg-bubble{background:linear-gradient(120deg,#ff7fa9,#f26aa0);color:#fff;border-top-right-radius:6px;box-shadow:0 10px 22px -12px rgba(242,106,160,.95);}
+.msg-bubble .disclaimer{display:block;margin-top:9px;font-size:11.5px;line-height:1.5;padding:9px 11px;border-radius:9px;background:#fff8fb;color:#a2668a;border-left:3px solid #ffb3d1;}
+.msg-bubble ul{margin:8px 0 0 18px;font-size:12.5px;color:#8a5c7c;}
+.msg-bubble ul li{margin-bottom:4px;}
+.msg-meta{font-size:10px;color:#c8a0ba;margin-top:6px;font-family:'JetBrains Mono',monospace;}
+.typing{display:flex;gap:3px;padding:4px 0;}
+.typing span{width:6px;height:6px;border-radius:50%;background:#d9aec6;animation:b 1.2s infinite;}
+.typing span:nth-child(2){animation-delay:.15s;}
+.typing span:nth-child(3){animation-delay:.3s;}
+@keyframes b{0%,60%,100%{transform:translateY(0);opacity:.5;}30%{transform:translateY(-4px);opacity:1;}}
+
+.quick-prompts{display:flex;flex-wrap:wrap;gap:7px;padding:0 28px 12px;}
+.quick-chip{padding:8px 13px;font-family:inherit;font-size:12px;font-weight:500;color:#8a5c7c;background:#fff;border:1px solid var(--line);border-radius:99px;cursor:pointer;white-space:nowrap;}
+.quick-chip:hover{background:linear-gradient(100deg,#fff2f8,#ffe6f2);border-color:#f8c8dd;color:var(--rose-deep);}
+
+.chat-input-bar{padding:14px 28px 20px;border-top:1px solid var(--line-soft);background:#fff;display:flex;gap:10px;align-items:flex-end;}
+.chat-input-wrap{flex:1;position:relative;display:flex;align-items:center;}
+.chat-input{width:100%;padding:13px 50px 13px 16px;font-family:inherit;font-size:14px;color:var(--text);background:#fff8fb;border:1.5px solid var(--line);border-radius:14px;outline:none;resize:none;max-height:120px;line-height:1.5;}
+.chat-input:focus{background:#fff;border-color:#f47ba8;box-shadow:0 0 0 4px rgba(255,107,157,.14);}
+.send-btn{position:absolute;right:6px;bottom:6px;width:38px;height:38px;border-radius:11px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;display:grid;place-items:center;box-shadow:0 8px 18px -8px rgba(255,107,157,.95);}
+.send-btn:disabled{opacity:.4;cursor:not-allowed;}
+.send-btn svg{width:17px;height:17px;}
+
+/* TOAST */
+.toast{position:fixed;top:22px;left:50%;transform:translate(-50%,-130%);z-index:99;display:flex;align-items:center;gap:11px;padding:13px 20px;background:#fff;border-radius:14px;box-shadow:0 20px 46px -14px rgba(201,66,126,.45);font-size:13.5px;font-weight:500;color:var(--text);transition:transform .45s cubic-bezier(.2,1.3,.4,1);}
+.toast.show{transform:translate(-50%,0);}
+.toast .tick{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--purple));display:grid;place-items:center;}
+.toast .tick svg{width:14px;height:14px;}
+
+/* MOBILE */
+.menu-btn{display:none;width:36px;height:36px;border-radius:11px;border:1px solid var(--line);background:#fff;cursor:pointer;place-items:center;color:#8a5c7c;flex-shrink:0;}
+.menu-btn svg{width:17px;height:17px;}
+.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(74,35,64,.3);backdrop-filter:blur(3px);z-index:40;opacity:0;transition:opacity .3s;pointer-events:none;}
+.sidebar-backdrop.show{opacity:1;pointer-events:auto;}
+@media (max-width:820px){
+  .sidebar{position:fixed;left:-260px;top:0;bottom:0;z-index:50;transition:left .3s cubic-bezier(.2,.8,.2,1);}
+  .sidebar.open{left:0;}
+  .menu-btn{display:grid;}
+  .sidebar-backdrop{display:block;}
+  .chat-head{padding:16px 18px 14px;flex-wrap:wrap;}
+  .chat-body{padding:18px;}
+  .chat-input-bar{padding:12px 18px 16px;}
+  .quick-prompts{padding:0 18px 12px;}
+  .msg{max-width:88%;}
+  .algo-badge{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast">
+  <span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+  <span id="toastMsg">Saved!</span>
+</div>
+
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+<div class="shell">
+
+  <!-- ★ SIDEBAR — all links correct -->
+  <aside class="sidebar" id="sidebar">
+    <div class="logo">
+      <span class="logo-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2.5c3.5 3 6 6.2 6 9.6a6 6 0 0 1-12 0c0-3.4 2.5-6.6 6-9.6z"/>
+          <path d="M12 18.5v3"/>
+        </svg>
+      </span>
+      Sakhi
+    </div>
+
+    <div class="nav-section">Menu</div>
+
+    <a class="nav-item" href="dashboard.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="9" rx="1.5"/>
+        <rect x="14" y="3" width="7" height="5" rx="1.5"/>
+        <rect x="14" y="12" width="7" height="9" rx="1.5"/>
+        <rect x="3" y="16" width="7" height="5" rx="1.5"/>
+      </svg>
+      Dashboard
+    </a>
+
+    <a class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+      Health Assistant
+    </a>
+
+    <a class="nav-item" href="calendar.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4" width="18" height="18" rx="2"/>
+        <path d="M16 2v4M8 2v4M3 10h18"/>
+      </svg>
+      Calendar
+    </a>
+
+    <a class="nav-item" href="insights.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>
+      </svg>
+      Insights
+    </a>
+
+    <div class="algo-panel">
+      <h4>Last match info</h4>
+      <div class="algo-row"><span>Algorithm</span><strong id="lastAlgo">—</strong></div>
+      <div class="algo-row"><span>KMP comp</span><strong id="lastKmp">—</strong></div>
+      <div class="algo-row"><span>Naive comp</span><strong id="lastNaive">—</strong></div>
+      <div class="algo-row"><span>Time</span><strong id="lastTime">—</strong></div>
+      <div class="algo-row"><span>Score</span><strong id="lastScore">—</strong></div>
+    </div>
+
+    <div class="sidebar-foot">
+      <div class="user-card">
+        <div class="user-avatar" id="sidebarAvatar">M</div>
+        <div class="user-meta">
+          <div class="user-name" id="sidebarName">User</div>
+          <div class="user-tag" id="sidebarTag">normal</div>
+        </div>
+        <button class="logout-btn" id="logoutBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="chat-head">
+      <button class="menu-btn" id="menuBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+      <div class="bot-avatar">🌸</div>
+      <div>
+        <h1>Health Assistant</h1>
+        <p><span class="online-dot"></span> Educational chatbot · never diagnostic</p>
+      </div>
+      <div class="chat-head-right">
+        <div class="algo-badge" id="algoBadge">
+          <span id="badgeName">Idle</span>
+          <span id="badgeTime">—</span>
+        </div>
+        <div class="mode-toggle">
+          <button class="mode-btn active" data-mode="learn">📚 Learn</button>
+          <button class="mode-btn" data-mode="support">💬 Support</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="chat-body" id="chatBody">
+      <div class="msg bot">
+        <div class="msg-avatar">🌸</div>
+        <div class="msg-bubble">
+          Hi <strong id="welcomeName">there</strong>! I'm your Sakhi Health Assistant.
+          <br><br>
+          I can explain <strong>PCOS</strong>, <strong>PCOD</strong>, irregular cycles, PMS, and cycle phases — using simple, general information.
+          <ul>
+            <li>Switch between <strong>📚 Learn</strong> and <strong>💬 Support</strong> modes</li>
+            <li>Ask anything in your own words</li>
+            <li>I use <strong>KMP</strong> + <strong>Naive string matching</strong> to find the best answer</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="quick-prompts">
+      <button class="quick-chip">What is PCOS?</button>
+      <button class="quick-chip">What is PCOD?</button>
+      <button class="quick-chip">PCOS vs PCOD</button>
+      <button class="quick-chip">Why are my periods irregular?</button>
+      <button class="quick-chip">What causes cramps?</button>
+      <button class="quick-chip">What is ovulation?</button>
+    </div>
+
+    <div class="chat-input-bar">
+      <div class="chat-input-wrap">
+        <textarea class="chat-input" id="chatInput" rows="1" placeholder="Ask about PCOS, PCOD, or your cycle…"></textarea>
+        <button class="send-btn" id="sendBtn" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+/* ========== USER ========== */
+function safeJSON(k,f){try{return JSON.parse(localStorage.getItem(k))||f;}catch(e){return f;}}
+let user=safeJSON('sakhi_user',null);
+if(!user||!user.fullName)user={fullName:'Madhushree',condition:'normal'};
+const firstName=user.fullName.trim().split(/\s+/)[0];
+const condition=(user.condition||'normal').toLowerCase();
+const COND={normal:'Normal',pcod:'PCOD',pcos:'PCOS'};
+document.getElementById('sidebarName').textContent=user.fullName;
+document.getElementById('sidebarAvatar').textContent=firstName.charAt(0).toUpperCase();
+document.getElementById('sidebarTag').textContent=COND[condition];
+document.getElementById('welcomeName').textContent=firstName;
+
+/* ========== KNOWLEDGE BASE ========== */
+const KB=[
+{title:'What is PCOS?',keywords:['pcos','polycystic','ovary syndrome','androgen','hormone imbalance'],
+learn:'<strong>PCOS (Polycystic Ovary Syndrome)</strong> is a common hormonal condition affecting 1 in 10 women of reproductive age. Key features include:<ul><li>Higher-than-typical levels of androgens</li><li>Irregular or missed periods</li><li>Many small fluid-filled sacs on the ovaries</li></ul>It\'s a syndrome — it shows up differently in different people. It\'s manageable with lifestyle, medication, and regular medical care.',
+support:'Many people with PCOS notice irregular periods, acne, extra hair growth, or difficulty managing weight. These symptoms are common and manageable. An accurate diagnosis needs a doctor\'s evaluation — usually involving blood tests and sometimes an ultrasound.'},
+{title:'What is PCOD?',keywords:['pcod','polycystic ovarian disease','ovarian disease'],
+learn:'<strong>PCOD (Polycystic Ovarian Disease)</strong> is a condition where the ovaries release many immature eggs, which can turn into small cysts. It often leads to:<ul><li>Irregular periods</li><li>Heavier or lighter flow</li><li>Mild hormonal changes</li></ul>PCOD is generally considered milder than PCOS.',
+support:'PCOD is usually a milder hormonal imbalance than PCOS, but it can still affect your cycle and energy. Tracking your periods, sleep, and symptoms over a few months gives your doctor a much clearer picture.'},
+{title:'PCOS vs PCOD',keywords:['pcos vs pcod','difference between pcos and pcod','pcos or pcod','compare pcos pcod'],
+learn:'The two terms are related but not identical:<ul><li><strong>PCOD</strong> = ovaries release many immature eggs → small cysts. Often milder.</li><li><strong>PCOS</strong> = a full endocrine syndrome with high androgens, irregular cycles, and metabolic effects.</li></ul>A doctor can tell the difference through hormone tests and imaging.',
+support:'It\'s understandable to be unsure which one applies to you. The clearest way to know is through a proper evaluation — blood tests (androgens, LH/FSH, insulin) and sometimes an ultrasound.'},
+{title:'Why are my periods irregular?',keywords:['irregular','irregular periods','late period','missed period','why irregular','period late','cycle irregular'],
+learn:'Cycles can vary for many reasons — most are not serious:<ul><li>Hormonal shifts</li><li>Stress and poor sleep</li><li>Significant weight change</li><li>Intense exercise</li><li>Thyroid issues</li><li>PCOS or PCOD</li></ul>A single irregular cycle is usually not a concern. Persistent irregularity (3+ months) is worth a doctor\'s visit.',
+support:'Irregular cycles are very common and often temporary. If irregularity persists beyond 2–3 cycles, or comes with heavy bleeding, severe pain, or other symptoms, a healthcare professional can help.'},
+{title:'What causes menstrual cramps?',keywords:['cramp','cramps','period pain','painful period','dysmenorrhea','stomach pain','lower abdomen'],
+learn:'Cramps happen when the uterus contracts to shed its lining. The chemical behind this is called <strong>prostaglandin</strong>. Higher levels → stronger contractions → more pain. Common relief options: warm compress, gentle movement, staying hydrated, anti-inflammatory options recommended by a professional.',
+support:'Cramps that interfere with daily life aren\'t something you have to just "put up with." If they\'re severe, getting worse over time, or don\'t respond to usual comfort measures, it\'s worth mentioning to a doctor.'},
+{title:'What is ovulation?',keywords:['ovulation','ovulate','fertile','fertile window','when do i ovulate','conceive'],
+learn:'<strong>Ovulation</strong> is when a mature egg is released from the ovary — usually around 14 days before your next period. The <strong>fertile window</strong> is the ~6 days leading up to and including ovulation.',
+support:'If you\'re trying to conceive — or trying to avoid it — understanding your fertile window is genuinely useful. Calendar-based estimates are just estimates; ovulation can move.'},
+{title:'Phases of the menstrual cycle',keywords:['phases','cycle phases','menstrual phase','follicular','luteal','four phases'],
+learn:'A typical cycle has four phases:<ul><li><strong>Menstrual</strong> (days 1–5): uterus sheds lining</li><li><strong>Follicular</strong> (days 1–13): eggs mature; estrogen rises</li><li><strong>Ovulation</strong> (around day 14): egg released</li><li><strong>Luteal</strong> (days 15–28): progesterone rises</li></ul>Lengths vary from person to person.',
+support:'Knowing your phases can genuinely help you plan energy-heavy tasks, rest days, and self-care. Your dashboard shows which phase you\'re in based on your own data.'},
+{title:'Is PMS normal?',keywords:['pms','premenstrual','mood swings','bloating','tender breasts','pms symptoms','pms normal'],
+learn:'<strong>PMS (Premenstrual Syndrome)</strong> affects up to 75% of menstruating people in the days before a period. Common signs include mood swings, bloating, breast tenderness, fatigue, food cravings, and headaches.',
+support:'PMS is very common — you\'re not imagining it. Gentle movement, sleep, reducing caffeine, and being kind to yourself all help. If symptoms feel overwhelming, a doctor can offer tailored support.'},
+{title:'When should I see a doctor?',keywords:['see a doctor','when to see doctor','consult doctor','medical help','should i worry','warning signs'],
+learn:'Consider seeing a healthcare professional if you notice:<ul><li>Periods that stop for 90+ days (and you\'re not pregnant)</li><li>Bleeding between periods, or after sex</li><li>Very heavy bleeding (soaking a pad every hour)</li><li>Severe pain that doesn\'t ease</li><li>Cycles consistently shorter than 21 or longer than 35 days</li></ul>None of these automatically mean something is wrong — but they\'re worth checking.',
+support:'Trust your instinct here. If something feels off — even if you can\'t explain it — it\'s worth a conversation with a doctor. Booking an appointment isn\'t overreacting; it\'s taking care of yourself.'},
+{title:'What is a normal cycle length?',keywords:['normal cycle','cycle length','how long cycle','average cycle','28 days','cycle range'],
+learn:'A typical adult cycle is <strong>21–35 days</strong> long, with the average around <strong>28 days</strong>. Period flow usually lasts <strong>2–7 days</strong>. Teens often have longer cycles (up to 45 days) in the first few years.',
+support:'Your "normal" is your own baseline — not a textbook number. What matters more is whether your cycles suddenly change, or come with symptoms that affect daily life.'},
+{title:'Can stress affect my period?',keywords:['stress','stress and period','stress affect cycle','anxiety','cortisol','mental health'],
+learn:'Yes — significantly. High stress raises <strong>cortisol</strong>, which can interfere with the hormones that trigger ovulation. This can delay your period, make it lighter or heavier, or skip a cycle entirely.',
+support:'If you\'ve been under a lot of pressure lately, that can absolutely show up in your cycle. Gentle routines, rest, and support systems genuinely help.'},
+{title:'What is the fertile window?',keywords:['fertile window','fertility','when can i get pregnant','conceive','fertile days','ovulation window'],
+learn:'The <strong>fertile window</strong> is the ~6-day period ending on ovulation day:<ul><li>5 days before ovulation (sperm can survive)</li><li>Ovulation day itself (egg lives ~24 hours)</li></ul>If trying to conceive → focus on these days.',
+support:'Calendar apps estimate the fertile window from your cycle history. Real ovulation can shift by a few days. If pregnancy planning is important, a doctor can offer more precise methods.'}
+];
+
+/* ========== KMP ========== */
+function buildLPS(p){const lps=new Array(p.length).fill(0);let len=0,i=1;while(i<p.length){if(p[i]===p[len]){len++;lps[i]=len;i++;}else if(len!==0){len=lps[len-1];}else{lps[i]=0;i++;}}return lps;}
+function kmpSearch(text,pattern){const t=text.toLowerCase(),p=pattern.toLowerCase();if(!p)return{found:false,comparisons:0};const lps=buildLPS(p);let i=0,j=0,c=0;while(i<t.length){c++;if(p[j]===t[i]){i++;j++;}if(j===p.length)return{found:true,comparisons:c};else if(i<t.length&&p[j]!==t[i]){if(j!==0)j=lps[j-1];else i++;}}return{found:false,comparisons:c};}
+
+/* ========== NAIVE ========== */
+function naiveSearch(text,pattern){const t=text.toLowerCase(),p=pattern.toLowerCase();if(!p)return{found:false,comparisons:0};let c=0;const n=t.length,m=p.length;for(let i=0;i<=n-m;i++){let j=0;while(j<m){c++;if(t[i+j]!==p[j])break;j++;}if(j===m)return{found:true,comparisons:c};}return{found:false,comparisons:c};}
+
+/* ========== RESOLVE ========== */
+function resolveAnswer(q){const query=q.toLowerCase();let best=null,bs=0,tk=0,tn=0;KB.forEach(e=>{let s=0;e.keywords.forEach(kw=>{const n=naiveSearch(query,kw),k=kmpSearch(query,kw);tn+=n.comparisons;tk+=k.comparisons;const w=kw.length>=6?2:1;if(n.found)s+=w*10;if(k.found)s+=w*10;});const tw=e.title.toLowerCase().split(/\s+/).filter(w=>w.length>3);tw.forEach(w=>{if(query.includes(w))s+=5;});if(s>bs){bs=s;best=e;}});return{entry:best,score:bs,kmpComp:tk,naiveComp:tn};}
+
+/* ========== CHAT UI ========== */
+const chatBody=document.getElementById('chatBody');
+const chatInput=document.getElementById('chatInput');
+const sendBtn=document.getElementById('sendBtn');
+const badgeName=document.getElementById('badgeName');
+const badgeTime=document.getElementById('badgeTime');
+const algoBadge=document.getElementById('algoBadge');
+const lastAlgo=document.getElementById('lastAlgo');
+const lastKmp=document.getElementById('lastKmp');
+const lastNaive=document.getElementById('lastNaive');
+const lastTime=document.getElementById('lastTime');
+const lastScore=document.getElementById('lastScore');
+let mode='learn';
+
+document.querySelectorAll('.mode-btn').forEach(b=>{b.addEventListener('click',()=>{document.querySelectorAll('.mode-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');mode=b.dataset.mode;showToast('Switched to '+(mode==='learn'?'📚 Learn':'💬 Support')+' mode');});});
+
+chatInput.addEventListener('input',()=>{sendBtn.disabled=chatInput.value.trim().length===0;chatInput.style.height='auto';chatInput.style.height=Math.min(chatInput.scrollHeight,120)+'px';});
+chatInput.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}});
+sendBtn.addEventListener('click',sendMessage);
+
+document.querySelectorAll('.quick-chip').forEach(c=>c.addEventListener('click',()=>{chatInput.value=c.textContent;sendBtn.disabled=false;sendMessage();}));
+
+function addMessage(text,who='bot',meta=null){
+  const msg=document.createElement('div');
+  msg.className='msg '+who;
+  const av=document.createElement('div');
+  av.className='msg-avatar';
+  av.textContent=who==='bot'?'🌸':firstName.charAt(0).toUpperCase();
+  const bub=document.createElement('div');
+  bub.className='msg-bubble';
+  bub.innerHTML=text;
+  if(meta){const m=document.createElement('div');m.className='msg-meta';m.textContent=meta;bub.appendChild(m);}
+  msg.appendChild(av);msg.appendChild(bub);
+  chatBody.appendChild(msg);
+  chatBody.scrollTop=chatBody.scrollHeight;
+}
+
+function showTyping(){const m=document.createElement('div');m.className='msg bot';m.id='typing';m.innerHTML='<div class="msg-avatar">🌸</div><div class="msg-bubble"><div class="typing"><span></span><span></span><span></span></div></div>';chatBody.appendChild(m);chatBody.scrollTop=chatBody.scrollHeight;}
+function hideTyping(){const t=document.getElementById('typing');if(t)t.remove();}
+
+function sendMessage(){
+  const text=chatInput.value.trim();
+  if(!text)return;
+  addMessage(text,'user');
+  chatInput.value='';
+  chatInput.style.height='auto';
+  sendBtn.disabled=true;
+  showTyping();
+
+  setTimeout(()=>{
+    const t0=performance.now();
+    const result=resolveAnswer(text);
+    const elapsed=performance.now()-t0;
+    hideTyping();
+
+    if(!result.entry||result.score<10){
+      const fb='I\'m not sure I have a good answer for that yet. 🌸<br><br>Try asking about:<ul><li>PCOS or PCOD</li><li>Irregular periods</li><li>Ovulation and the fertile window</li><li>Period cramps, PMS, or cycle phases</li></ul><span class="disclaimer">I only provide general educational information — not medical advice. For personal concerns, please talk to a healthcare professional.</span>';
+      addMessage(fb,'bot','No match · KMP '+result.kmpComp+' · Naive '+result.naiveComp+' · '+elapsed.toFixed(2)+' ms');
+      updateBadge('No match',elapsed);
+      updatePanel('KMP + Naive',result.kmpComp,result.naiveComp,elapsed,result.score);
+      return;
+    }
+
+    const body=mode==='learn'?result.entry.learn:result.entry.support;
+    const disc='<span class="disclaimer">This is general educational information — not medical advice. For personal concerns, please consult a qualified healthcare professional.</span>';
+    addMessage('<strong>'+result.entry.title+'</strong><br><br>'+body+'<br>'+disc,'bot','Matched · KMP '+result.kmpComp+' · Naive '+result.naiveComp+' · '+elapsed.toFixed(2)+' ms');
+    updateBadge('Matched',elapsed);
+    updatePanel('KMP + Naive',result.kmpComp,result.naiveComp,elapsed,result.score);
+  },650);
+}
+
+function updateBadge(status,ms){badgeName.textContent=status;badgeTime.textContent=ms.toFixed(2)+' ms';algoBadge.classList.add('flash');setTimeout(()=>algoBadge.classList.remove('flash'),900);}
+function updatePanel(a,k,n,t,s){lastAlgo.textContent=a;lastKmp.textContent=k;lastNaive.textContent=n;lastTime.textContent=t.toFixed(2)+' ms';lastScore.textContent=s;}
+
+/* ========== MOBILE + LOGOUT ========== */
+const sidebar=document.getElementById('sidebar');
+const backdrop=document.getElementById('sidebarBackdrop');
+document.getElementById('menuBtn').addEventListener('click',()=>{sidebar.classList.add('open');backdrop.classList.add('show');});
+backdrop.addEventListener('click',()=>{sidebar.classList.remove('open');backdrop.classList.remove('show');});
+document.getElementById('logoutBtn').addEventListener('click',()=>{try{localStorage.removeItem('sakhi_logged_in');localStorage.removeItem('sakhi_remember');}catch(e){}window.location.href='login.html';});
+
+/* ========== TOAST ========== */
+function showToast(m){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);}
+</script>
+</body>
+</html>

@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sakhi · Insights</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pink:#ff6b9d; --pink-mid:#f47ba8; --purple:#b06bd6;
+  --rose-deep:#c9427e; --text:#4a2340; --muted:#a5839a;
+  --line:#f7dce9; --line-soft:#fbeaf3;
+  --error:#e5484d; --green:#12b76a; --amber:#f79009; --blue:#3b82f6;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  font-family:'Outfit',system-ui,sans-serif;
+  background:#fff7fb; color:var(--text);
+  min-height:100vh; overflow:hidden;
+}
+.shell{ display:flex; height:100vh; }
+
+/* ===== SIDEBAR ===== */
+.sidebar{
+  width:236px; flex-shrink:0;
+  background:linear-gradient(180deg,#fff8fc,#fff1f8);
+  border-right:1px solid var(--line);
+  display:flex; flex-direction:column;
+  padding:22px 16px 18px; overflow-y:auto;
+}
+.sidebar::-webkit-scrollbar{ width:5px; }
+.sidebar::-webkit-scrollbar-thumb{ background:#f8c8dd; border-radius:99px; }
+.logo{
+  display:flex; align-items:center; gap:10px;
+  font-size:20px; font-weight:700; color:#8e2b5c;
+  padding:0 6px; margin-bottom:26px;
+}
+.logo-mark{
+  width:34px; height:34px; border-radius:11px;
+  background:linear-gradient(135deg,var(--pink),var(--purple));
+  display:grid; place-items:center;
+  box-shadow:0 8px 18px -6px rgba(255,107,157,.85);
+}
+.logo-mark svg{ width:18px; height:18px; }
+.nav-section{
+  font-size:10px; font-weight:600; text-transform:uppercase;
+  letter-spacing:1.2px; color:#c8a0ba; padding:0 10px;
+  margin:14px 0 8px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:11px;
+  padding:10px 12px; border-radius:11px;
+  font-size:13.5px; font-weight:500; color:#8a5c7c;
+  text-decoration:none; cursor:pointer;
+  transition:all .18s; margin-bottom:2px;
+}
+.nav-item svg{ width:17px; height:17px; flex-shrink:0; }
+.nav-item:hover{ background:#ffeef6; color:var(--rose-deep); }
+.nav-item.active{
+  background:linear-gradient(100deg,#ffd6e8,#f2d5f7);
+  color:#8e2b5c; font-weight:600;
+  box-shadow:0 8px 16px -10px rgba(242,106,160,.7);
+}
+.nav-item.active svg{ color:var(--rose-deep); }
+.sidebar-foot{ margin-top:auto; padding-top:18px; }
+.user-card{
+  display:flex; align-items:center; gap:10px;
+  padding:10px 11px; background:#fff;
+  border:1px solid var(--line); border-radius:14px;
+}
+.user-avatar{
+  width:36px; height:36px; border-radius:50%;
+  background:linear-gradient(135deg,var(--pink),var(--purple));
+  color:#fff; display:grid; place-items:center;
+  font-size:15px; font-weight:600; flex-shrink:0;
+}
+.user-meta{ min-width:0; flex:1; }
+.user-name{
+  font-size:13px; font-weight:600; color:#5c2a4c;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.user-tag{ font-size:10.5px; color:var(--muted); text-transform:capitalize; }
+.logout-btn{
+  background:none; border:none; cursor:pointer;
+  padding:6px; border-radius:8px; color:#c8a0ba;
+  display:grid; place-items:center; transition:all .18s;
+}
+.logout-btn:hover{ color:var(--error); background:#fff0f0; }
+.logout-btn svg{ width:15px; height:15px; }
+
+/* ===== MAIN ===== */
+.main{ flex:1; display:flex; flex-direction:column; min-width:0; overflow:hidden; }
+.topbar{
+  display:flex; align-items:center; gap:16px;
+  padding:20px 28px 16px; flex-shrink:0;
+}
+.topbar h1{
+  font-size:22px; font-weight:600;
+  color:#5c2a4c; margin-bottom:3px;
+}
+.topbar h1 span{
+  background:linear-gradient(90deg,#e8558f,#a855f7);
+  -webkit-background-clip:text; background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.topbar p{ font-size:12.5px; color:var(--muted); }
+.topbar-right{ margin-left:auto; }
+.chip{
+  display:flex; align-items:center; gap:7px;
+  padding:8px 14px; background:#fff;
+  border:1px solid var(--line); border-radius:11px;
+  font-size:12.5px; font-weight:500; color:#7c3a5c;
+}
+.chip svg{ width:14px; height:14px; color:var(--pink); }
+
+.content{ flex:1; overflow-y:auto; padding:0 28px 28px; }
+.content::-webkit-scrollbar{ width:8px; }
+.content::-webkit-scrollbar-thumb{ background:#f8c8dd; border-radius:99px; }
+
+.grid{
+  display:grid; grid-template-columns:repeat(4,1fr);
+  gap:16px;
+}
+.card{
+  background:#fff; border:1px solid var(--line);
+  border-radius:20px; padding:20px;
+  box-shadow:0 10px 28px -20px rgba(201,66,126,.35);
+}
+.card-head{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:14px; gap:10px;
+}
+.card-title{
+  font-size:13.5px; font-weight:600; color:#7c3a5c;
+  display:flex; align-items:center; gap:7px;
+}
+.card-title svg{ width:15px; height:15px; color:var(--pink); }
+.card-tag{
+  font-size:10px; font-weight:600; letter-spacing:.5px;
+  text-transform:uppercase; padding:3px 9px;
+  border-radius:99px; background:#ffeef6; color:var(--rose-deep);
+  white-space:nowrap;
+}
+.card-tag.algo{
+  background:linear-gradient(100deg,#ffd6e8,#f2d5f7);
+  color:#8e2b5c; font-family:'JetBrains Mono',monospace;
+}
+
+/* ===== STAT MINI ===== */
+.stat-card{ padding:18px; display:flex; flex-direction:column; gap:9px; }
+.stat-icon{
+  width:36px; height:36px; border-radius:11px;
+  display:grid; place-items:center; margin-bottom:2px;
+}
+.stat-icon svg{ width:17px; height:17px; }
+.stat-icon.pink{ background:#ffe6f2; color:#d63384; }
+.stat-icon.purple{ background:#f3e6ff; color:#8b5cf6; }
+.stat-icon.blue{ background:#e6f0ff; color:#3b82f6; }
+.stat-icon.green{ background:#e3f9ee; color:#12b76a; }
+.stat-label{
+  font-size:11px; font-weight:500; color:var(--muted);
+  text-transform:uppercase; letter-spacing:.8px;
+}
+.stat-value{
+  font-size:22px; font-weight:700; color:#5c2a4c; letter-spacing:-.5px;
+  line-height:1.1;
+}
+.stat-value small{
+  font-size:12px; font-weight:500; color:#a5839a;
+  margin-left:3px; letter-spacing:0;
+}
+.stat-hint{ font-size:11px; color:#b0809e; line-height:1.5; }
+
+/* ===== HEALTH GAUGE ===== */
+.health-card{
+  grid-column:1;
+  display:flex; flex-direction:column; align-items:center;
+  text-align:center; padding:24px 20px;
+  background:linear-gradient(165deg,#fff8fc,#fff,#fef4ff);
+}
+.gauge-wrap{
+  width:180px; height:180px; position:relative; margin:6px 0 16px;
+}
+.gauge-wrap svg{ width:100%; height:100%; transform:rotate(-90deg); }
+.gauge-bg{ fill:none; stroke:#fbeaf3; stroke-width:14; }
+.gauge-fill{
+  fill:none; stroke-linecap:round;
+  stroke-dasharray:439.8;
+  stroke-dashoffset:439.8;
+  transition:stroke-dashoffset 1.6s cubic-bezier(.2,.8,.2,1);
+}
+.gauge-center{
+  position:absolute; inset:0;
+  display:grid; place-content:center; text-align:center;
+}
+.gauge-score{
+  font-size:44px; font-weight:700;
+  color:#a12c62; letter-spacing:-2.5px; line-height:1;
+}
+.gauge-score small{
+  font-size:14px; font-weight:500; color:#c07ba0;
+  margin-left:2px; letter-spacing:0;
+}
+.gauge-label{
+  font-size:10.5px; text-transform:uppercase;
+  letter-spacing:1.4px; color:#c07ba0;
+  margin-top:6px; font-weight:500;
+}
+.gauge-status{
+  font-size:13.5px; font-weight:600; color:#8e2b5c;
+  margin-bottom:5px;
+}
+.gauge-desc{
+  font-size:11.5px; color:#a2668a; line-height:1.5;
+  max-width:220px;
+}
+
+/* ===== BIG CHART ===== */
+.chart-card{ grid-column:2 / span 3; padding-bottom:14px; }
+.chart-container{
+  width:100%; overflow-x:auto;
+  padding-bottom:4px;
+}
+.chart-container::-webkit-scrollbar{ height:6px; }
+.chart-container::-webkit-scrollbar-thumb{ background:#f8c8dd; border-radius:99px; }
+.chart-svg{ display:block; }
+
+/* ===== PATTERN DETECTION ===== */
+.patterns-card{ grid-column:1 / span 2; }
+.pattern-list{ display:flex; flex-direction:column; gap:9px; }
+.pattern-item{
+  display:flex; align-items:flex-start; gap:11px;
+  padding:12px 13px; border-radius:12px;
+  background:#fff8fb; border:1px solid var(--line-soft);
+  font-size:12.5px;
+}
+.pi-icon{
+  width:28px; height:28px; border-radius:9px;
+  display:grid; place-items:center; flex-shrink:0;
+  font-size:14px;
+}
+.pi-icon.good{ background:#e3f9ee; }
+.pi-icon.warn{ background:#fff4e6; }
+.pi-icon.bad{ background:#ffe6e6; }
+.pi-icon.info{ background:#e6f0ff; }
+.pi-body{ min-width:0; flex:1; }
+.pi-title{
+  font-weight:600; color:#5c2a4c; margin-bottom:3px;
+  display:flex; align-items:center; gap:6px;
+}
+.pi-badge{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9.5px; padding:2px 6px;
+  background:#fff; border:1px solid var(--line);
+  border-radius:5px; color:#a5839a; font-weight:500;
+}
+.pi-text{ font-size:11.5px; color:#a2668a; line-height:1.5; }
+
+/* ===== PREDICTIONS ===== */
+.pred-card{ grid-column:3 / span 2; }
+.pred-list{ display:flex; flex-direction:column; gap:10px; }
+.pred-item{
+  display:flex; align-items:center; gap:12px;
+  padding:12px 14px; border-radius:13px;
+  background:linear-gradient(150deg,#fff5fa,#ffeef7);
+  border:1px solid #f9c4dd;
+}
+.pred-num{
+  width:36px; height:36px; border-radius:11px;
+  background:linear-gradient(135deg,var(--pink),var(--purple));
+  color:#fff; display:grid; place-items:center;
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px; font-weight:600; flex-shrink:0;
+  box-shadow:0 8px 16px -8px rgba(255,107,157,.9);
+}
+.pred-meta{ min-width:0; flex:1; }
+.pred-date{
+  font-size:13px; font-weight:600; color:#5c2a4c;
+  margin-bottom:2px;
+}
+.pred-detail{
+  font-size:11.5px; color:#a2668a;
+  font-family:'JetBrains Mono',monospace;
+}
+.pred-confidence{
+  font-size:10px; font-weight:600;
+  letter-spacing:.5px; text-transform:uppercase;
+  padding:4px 8px; border-radius:7px;
+  white-space:nowrap;
+}
+.pred-confidence.high{ background:#e3f9ee; color:#0e8c50; }
+.pred-confidence.med{ background:#fff4e6; color:#b96d00; }
+.pred-confidence.low{ background:#ffe6e6; color:#c53030; }
+
+/* ===== CONDITION TIPS ===== */
+.tips-card{
+  grid-column:1 / span 2;
+  background:linear-gradient(150deg,#fff8fc 0%,#fff 60%,#fdf4ff 100%);
+}
+.tips-list{ display:flex; flex-direction:column; gap:9px; }
+.tip-item{
+  display:flex; gap:11px; align-items:flex-start;
+  padding:11px 13px; border-radius:12px;
+  background:#fff; border:1px solid var(--line-soft);
+  font-size:12.5px;
+}
+.tip-emoji{
+  width:28px; height:28px; border-radius:9px;
+  background:#ffeef6; display:grid; place-items:center;
+  flex-shrink:0; font-size:14px;
+}
+.tip-body{ min-width:0; }
+.tip-title{
+  font-weight:600; color:#5c2a4c; margin-bottom:3px;
+}
+.tip-text{ font-size:11.5px; color:#a2668a; line-height:1.5; }
+
+/* ===== ALGORITHM REFERENCE ===== */
+.algo-ref{ grid-column:3 / span 2; }
+.algo-table{
+  width:100%; border-collapse:collapse;
+  font-size:12px;
+}
+.algo-table th{
+  text-align:left; font-size:10.5px;
+  text-transform:uppercase; letter-spacing:.8px;
+  color:#c8a0ba; font-weight:600;
+  padding:6px 10px; border-bottom:1px solid var(--line-soft);
+}
+.algo-table td{
+  padding:9px 10px; border-bottom:1px solid var(--line-soft);
+  color:#5c2a4c;
+}
+.algo-table tr:last-child td{ border-bottom:none; }
+.algo-table td:first-child{
+  font-weight:500;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+}
+.algo-table td:nth-child(2){
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px; color:var(--rose-deep);
+  white-space:nowrap;
+}
+.algo-table td:nth-child(3){
+  color:#a5839a; font-size:11.5px;
+}
+
+/* ===== TOAST ===== */
+.toast{
+  position:fixed; top:22px; left:50%;
+  transform:translate(-50%,-130%);
+  z-index:99; display:flex; align-items:center; gap:11px;
+  padding:13px 20px; background:#fff; border-radius:14px;
+  box-shadow:0 20px 46px -14px rgba(201,66,126,.45);
+  font-size:13.5px; font-weight:500; color:var(--text);
+  transition:transform .45s cubic-bezier(.2,1.3,.4,1);
+}
+.toast.show{ transform:translate(-50%,0); }
+.toast .tick{
+  width:26px; height:26px; border-radius:50%;
+  background:linear-gradient(135deg,var(--pink),var(--purple));
+  display:grid; place-items:center;
+}
+.toast .tick svg{ width:14px; height:14px; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width:1100px){
+  .grid{ grid-template-columns:repeat(2,1fr); }
+  .health-card{ grid-column:1 / span 2; }
+  .chart-card{ grid-column:1 / span 2; }
+  .patterns-card{ grid-column:1 / span 2; }
+  .pred-card{ grid-column:1 / span 2; }
+  .tips-card{ grid-column:1 / span 2; }
+  .algo-ref{ grid-column:1 / span 2; }
+}
+@media (max-width:820px){
+  .sidebar{
+    position:fixed; left:-260px; top:0; bottom:0; z-index:50;
+    transition:left .3s cubic-bezier(.2,.8,.2,1);
+  }
+  .sidebar.open{ left:0; }
+  .menu-btn{ display:grid !important; }
+  .sidebar-backdrop{ display:block !important; }
+}
+@media (max-width:640px){
+  .topbar{ padding:16px 18px 12px; }
+  .content{ padding:0 18px 22px; }
+  .grid{ grid-template-columns:1fr; }
+  .health-card, .chart-card, .patterns-card,
+  .pred-card, .tips-card, .algo-ref{ grid-column:1; }
+  .chip{ display:none; }
+}
+.menu-btn{
+  display:none; width:36px; height:36px;
+  border-radius:11px; border:1px solid var(--line);
+  background:#fff; cursor:pointer;
+  place-items:center; color:#8a5c7c; flex-shrink:0;
+}
+.menu-btn svg{ width:17px; height:17px; }
+.sidebar-backdrop{
+  display:none; position:fixed; inset:0;
+  background:rgba(74,35,64,.3);
+  backdrop-filter:blur(3px); z-index:40;
+  opacity:0; transition:opacity .3s; pointer-events:none;
+}
+.sidebar-backdrop.show{ opacity:1; pointer-events:auto; }
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast">
+  <span class="tick">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+  </span>
+  <span id="toastMsg">Saved!</span>
+</div>
+
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+  <div class="logo">
+    <span class="logo-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2.5c3.5 3 6 6.2 6 9.6a6 6 0 0 1-12 0c0-3.4 2.5-6.6 6-9.6z"/>
+        <path d="M12 18.5v3"/>
+      </svg>
+    </span>
+    Sakhi
+  </div>
+
+  <div class="nav-section">Menu</div>
+
+  <a class="nav-item" href="dashboard.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="3" width="7" height="9" rx="1.5"/>
+      <rect x="14" y="3" width="7" height="5" rx="1.5"/>
+      <rect x="14" y="12" width="7" height="9" rx="1.5"/>
+      <rect x="3" y="16" width="7" height="5" rx="1.5"/>
+    </svg>
+    Dashboard
+  </a>
+
+  <a class="nav-item" href="chatbot.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+    </svg>
+    Health Assistant
+  </a>
+
+ <a class="nav-item" href="calendar.html">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="4" width="18" height="18" rx="2"/>
+    <path d="M16 2v4M8 2v4M3 10h18"/>
+  </svg>
+  Calendar
+</a>
+  <a class="nav-item active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>
+    </svg>
+    Insights
+  </a>
+
+  <div class="sidebar-foot">
+    <div class="user-card">
+      <div class="user-avatar" id="sidebarAvatar">M</div>
+      <div class="user-meta">
+        <div class="user-name" id="sidebarName">User</div>
+        <div class="user-tag" id="sidebarTag">normal</div>
+      </div>
+      <button class="logout-btn" id="logoutBtn" title="Log out">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+      <div>
+        <h1>Your <span>insights</span> 🔍</h1>
+        <p>What your cycle data is telling us — algorithmically.</p>
+      </div>
+      <div class="topbar-right">
+        <div class="chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2"/>
+            <path d="M16 2v4M8 2v4M3 10h18"/>
+          </svg>
+          <span id="todayDate">—</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="grid">
+
+        <!-- ===== STAT MINI CARDS ===== -->
+        <div class="card stat-card">
+          <div class="stat-icon pink">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>
+            </svg>
+          </div>
+          <div class="stat-label">Cycles tracked</div>
+          <div class="stat-value" id="statCount">—</div>
+          <div class="stat-hint" id="statCountHint">—</div>
+        </div>
+
+        <div class="card stat-card">
+          <div class="stat-icon purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>
+            </svg>
+          </div>
+          <div class="stat-label">Average cycle</div>
+          <div class="stat-value" id="statAvg">—<small>days</small></div>
+          <div class="stat-hint" id="statAvgHint">—</div>
+        </div>
+
+        <div class="card stat-card">
+          <div class="stat-icon blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+          <div class="stat-label">Variability (σ)</div>
+          <div class="stat-value" id="statSd">—<small>days</small></div>
+          <div class="stat-hint" id="statSdHint">—</div>
+        </div>
+
+        <div class="card stat-card">
+          <div class="stat-icon green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+            </svg>
+          </div>
+          <div class="stat-label">Trend</div>
+          <div class="stat-value" id="statTrend">—</div>
+          <div class="stat-hint" id="statTrendHint">—</div>
+        </div>
+
+        <!-- ===== HEALTH GAUGE ===== -->
+        <div class="card health-card">
+          <div class="card-title" style="font-size:13px;margin-bottom:8px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+            Cycle health score
+          </div>
+
+          <div class="gauge-wrap">
+            <svg viewBox="0 0 200 200">
+              <defs>
+                <linearGradient id="gaugeGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#ff6b9d"/>
+                  <stop offset="100%" stop-color="#b06bd6"/>
+                </linearGradient>
+              </defs>
+              <circle class="gauge-bg" cx="100" cy="100" r="70"/>
+              <circle class="gauge-fill" id="gaugeFill" cx="100" cy="100" r="70" stroke="url(#gaugeGrad)"/>
+            </svg>
+            <div class="gauge-center">
+              <div class="gauge-score"><span id="gaugeScore">—</span><small>/100</small></div>
+              <div class="gauge-label">Health</div>
+            </div>
+          </div>
+
+          <div class="gauge-status" id="gaugeStatus">—</div>
+          <div class="gauge-desc" id="gaugeDesc">—</div>
+        </div>
+
+        <!-- ===== BIG CHART ===== -->
+        <div class="card chart-card">
+          <div class="card-head">
+            <div class="card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>
+              </svg>
+              Cycle length over time
+            </div>
+            <span class="card-tag algo">Regression + MA</span>
+          </div>
+          <div class="chart-container">
+            <svg class="chart-svg" id="chartSvg" viewBox="0 0 820 300" preserveAspectRatio="xMidYMid meet">
+              <!-- drawn by JS -->
+            </svg>
+          </div>
+        </div>
+
+        <!-- ===== PATTERN DETECTION ===== -->
+        <div class="card patterns-card">
+          <div class="card-head">
+            <div class="card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              Pattern detection
+            </div>
+            <span class="card-tag algo">4 algorithms</span>
+          </div>
+          <div class="pattern-list" id="patternList"></div>
+        </div>
+
+        <!-- ===== PREDICTIONS ===== -->
+        <div class="card pred-card">
+          <div class="card-head">
+            <div class="card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2.5c3.5 3 6 6.2 6 9.6a6 6 0 0 1-12 0c0-3.4 2.5-6.6 6-9.6z"/>
+              </svg>
+              Next 3 cycle predictions
+            </div>
+            <span class="card-tag algo">Moving Average</span>
+          </div>
+          <div class="pred-list" id="predList"></div>
+        </div>
+
+        <!-- ===== CONDITION TIPS ===== -->
+        <div class="card tips-card">
+          <div class="card-head">
+            <div class="card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18h6M10 22h4"/>
+                <path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.3h6c0-1 .4-1.8 1-2.3A7 7 0 0 0 12 2z"/>
+              </svg>
+              Personalised for <span id="condTipLabel" style="color:#c9427e;margin-left:3px;">—</span>
+            </div>
+          </div>
+          <div class="tips-list" id="tipsList"></div>
+        </div>
+
+        <!-- ===== ALGORITHM REFERENCE ===== -->
+        <div class="card algo-ref">
+          <div class="card-head">
+            <div class="card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="16 18 22 12 16 6"/>
+                <polyline points="8 6 2 12 8 18"/>
+              </svg>
+              Algorithms used on this page
+            </div>
+            <span class="card-tag">AOA</span>
+          </div>
+          <table class="algo-table">
+            <thead>
+              <tr><th>Algorithm</th><th>Complexity</th><th>Purpose</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Merge Sort</td><td>O(n log n)</td><td>Sort cycles for median & range</td></tr>
+              <tr><td>Linear Regression</td><td>O(n)</td><td>Detect trend in cycle lengths</td></tr>
+              <tr><td>Moving Average</td><td>O(n)</td><td>Smooth data + predict next cycles</td></tr>
+              <tr><td>Standard Deviation</td><td>O(n)</td><td>Measure cycle variability</td></tr>
+              <tr><td>Z-Score Outlier</td><td>O(n)</td><td>Flag unusually short/long cycles</td></tr>
+              <tr><td>Median Filtering</td><td>O(n log n)</td><td>Robust central tendency</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+/* =========================================================
+   SAFE STORAGE HELPERS
+   ========================================================= */
+function safeGet(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+function safeSet(k, v){ try { localStorage.setItem(k, v); } catch(e){} }
+function safeJSON(k, fallback){
+  try { return JSON.parse(localStorage.getItem(k)) || fallback; } catch(e){ return fallback; }
+}
+
+/* =========================================================
+   1. USER + CONFIG
+   ========================================================= */
+let user = safeJSON('sakhi_user', null);
+if (!user || !user.fullName){
+  user = { fullName:'Guest User', email:'', age:24, weightKg:52, condition:'normal' };
+}
+const firstName = user.fullName.trim().split(/\s+/)[0];
+const condition = (user.condition || 'normal').toLowerCase();
+const CONDITION_LABEL = { normal:'Normal', pcod:'PCOD', pcos:'PCOS' };
+
+document.getElementById('sidebarName').textContent = user.fullName;
+document.getElementById('sidebarAvatar').textContent = firstName.charAt(0).toUpperCase();
+document.getElementById('sidebarTag').textContent = CONDITION_LABEL[condition];
+document.getElementById('condTipLabel').textContent = CONDITION_LABEL[condition];
+
+const today = new Date();
+today.setHours(0,0,0,0);
+document.getElementById('todayDate').textContent =
+  today.toLocaleDateString('en-US', { weekday:'short', day:'numeric', month:'long' });
+
+const CYCLE_CONFIG = {
+  normal:{ cycleLength:28, periodLength:5 },
+  pcod:  { cycleLength:35, periodLength:6 },
+  pcos:  { cycleLength:35, periodLength:6 }
+};
+const cfg = CYCLE_CONFIG[condition] || CYCLE_CONFIG.normal;
+
+/* =========================================================
+   2. LOAD HISTORY
+   ========================================================= */
+function loadHistory(){
+  const raw = safeJSON('sakhi_period_history', null);
+  if (Array.isArray(raw) && raw.length) return raw;
+  const seed = [];
+  for (let i = 8; i >= 1; i--){
+    const d = new Date(today);
+    d.setDate(d.getDate() - i * cfg.cycleLength + Math.round((Math.random()-0.5) * 4));
+    seed.push({ date: d.toISOString().slice(0,10), length: cfg.periodLength });
+  }
+  safeSet('sakhi_period_history', JSON.stringify(seed));
+  return seed;
+}
+let history = loadHistory();
+history.sort((a,b) => new Date(b.date) - new Date(a.date));
+
+/* =========================================================
+   3. ALGORITHMS
+   ========================================================= */
+function mergeSort(arr, cmp){
+  if (arr.length <= 1) return arr;
+  const mid = Math.floor(arr.length / 2);
+  const L = mergeSort(arr.slice(0, mid), cmp);
+  const R = mergeSort(arr.slice(mid), cmp);
+  const out = []; let i = 0, j = 0;
+  while (i < L.length && j < R.length){
+    if (cmp(L[i], R[j]) <= 0) out.push(L[i++]); else out.push(R[j++]);
+  }
+  while (i < L.length) out.push(L[i++]);
+  while (j < R.length) out.push(R[j++]);
+  return out;
+}
+function mean(arr){
+  return arr.reduce((a,b) => a+b, 0) / arr.length;
+}
+function stdDev(arr){
+  if (arr.length < 2) return 0;
+  const m = mean(arr);
+  return Math.sqrt(arr.reduce((s,x) => s + (x-m)**2, 0) / arr.length);
+}
+function movingAverage(arr, w = 3){
+  if (!arr.length) return 0;
+  const s = arr.slice(-w);
+  return mean(s);
+}
+function median(sorted){
+  if (!sorted.length) return 0;
+  const m = Math.floor(sorted.length / 2);
+  return sorted.length % 2 ? sorted[m] : (sorted[m-1] + sorted[m]) / 2;
+}
+/* Linear regression: returns { slope, intercept } for y = slope*x + intercept */
+function linearRegression(yValues){
+  const n = yValues.length;
+  if (n < 2) return { slope:0, intercept:yValues[0] || 0 };
+  const xMean = (n - 1) / 2;
+  const yMean = mean(yValues);
+  let num = 0, den = 0;
+  yValues.forEach((y, i) => {
+    num += (i - xMean) * (y - yMean);
+    den += (i - xMean) ** 2;
+  });
+  const slope = den ? num / den : 0;
+  return { slope, intercept: yMean - slope * xMean };
+}
+/* Z-score outlier detection — returns indices where |z| > threshold */
+function detectOutliers(arr, threshold = 2){
+  if (arr.length < 3) return [];
+  const m = mean(arr);
+  const sd = stdDev(arr);
+  if (sd === 0) return [];
+  const out = [];
+  arr.forEach((v, i) => {
+    const z = Math.abs((v - m) / sd);
+    if (z > threshold) out.push({ index:i, value:v, z });
+  });
+  return out;
+}
+
+/* =========================================================
+   4. COMPUTE CYCLE LENGTHS
+   ========================================================= */
+function computeCycleLengths(){
+  const chrono = history.slice().sort((a,b) => new Date(a.date) - new Date(b.date));
+  const lengths = [];
+  for (let i = 1; i < chrono.length; i++){
+    const days = Math.round((new Date(chrono[i].date) - new Date(chrono[i-1].date)) / 86400000);
+    if (days > 5 && days < 90) lengths.push(days);
+  }
+  return lengths;
+}
+const cycleLengths = computeCycleLengths();
+const n = cycleLengths.length;
+
+/* =========================================================
+   5. HEALTH SCORE
+   ========================================================= */
+/* Formula: start 100, subtract penalties for variability & outliers */
+function computeHealthScore(){
+  if (n < 2) return { score: 0, level:'unknown', outliers: [] };
+
+  const sd = stdDev(cycleLengths);
+  const outliers = detectOutliers(cycleLengths, 2);
+  const avg = mean(cycleLengths);
+
+  let score = 100;
+  /* variability penalty — sd of 0 → 0 pts, sd of 7 → 28 pts */
+  score -= Math.min(35, sd * 4);
+  /* outlier penalty */
+  score -= outliers.length * 8;
+  /* distance from ideal range 21–35 days */
+  if (avg < 21) score -= (21 - avg) * 3;
+  if (avg > 35) score -= (avg - 35) * 3;
+
+  score = Math.max(0, Math.min(100, Math.round(score)));
+
+  let level;
+  if (score >= 85)      level = 'excellent';
+  else if (score >= 70) level = 'good';
+  else if (score >= 50) level = 'moderate';
+  else                  level = 'attention';
+
+  return { score, level, outliers, sd, avg };
+}
+
+/* =========================================================
+   6. RENDER — STAT MINI CARDS
+   ========================================================= */
+function renderStats(){
+  document.getElementById('statCount').textContent = n;
+  document.getElementById('statCountHint').textContent =
+    n === 0 ? 'Log periods to begin'
+    : n === 1 ? 'Add another to see patterns'
+    : `From ${history.length} period entries`;
+
+  const avg = n ? mean(cycleLengths) : 0;
+  document.getElementById('statAvg').innerHTML =
+    (n ? avg.toFixed(1) : '—') + '<small>days</small>';
+  document.getElementById('statAvgHint').textContent =
+    n ? `Ideal range: 21–35 days` : 'Need data';
+
+  const sd = stdDev(cycleLengths);
+  document.getElementById('statSd').innerHTML =
+    (n >= 2 ? sd.toFixed(2) : '—') + '<small>days</small>';
+  let sdhint = 'Need ≥ 2 cycles';
+  if (n >= 2){
+    if (sd < 2) sdhint = 'Very consistent ✨';
+    else if (sd < 4) sdhint = 'Normal variation';
+    else if (sd < 7) sdhint = 'Some variation';
+    else sdhint = 'High variability';
+  }
+  document.getElementById('statSdHint').textContent = sdhint;
+
+  /* trend */
+  const reg = linearRegression(cycleLengths);
+  let trendLabel = '—', trendHint = 'Need ≥ 2 cycles';
+  if (n >= 2){
+    const slope = reg.slope;
+    if (Math.abs(slope) < 0.4){
+      trendLabel = 'Stable'; trendHint = 'No significant change';
+    } else if (slope > 0){
+      trendLabel = 'Lengthening';
+      trendHint = `+${slope.toFixed(2)} days per cycle`;
+    } else {
+      trendLabel = 'Shortening';
+      trendHint = `${slope.toFixed(2)} days per cycle`;
+    }
+  }
+  document.getElementById('statTrend').textContent = trendLabel;
+  document.getElementById('statTrendHint').textContent = trendHint;
+}
+renderStats();
+
+/* =========================================================
+   7. RENDER — HEALTH GAUGE
+   ========================================================= */
+function renderGauge(){
+  const h = computeHealthScore();
+  const score = h.score;
+
+  /* circumference = 2π * 70 = 439.82 */
+  const CIRC = 2 * Math.PI * 70;
+  const pct = score / 100;
+  const offset = CIRC * (1 - pct);
+
+  setTimeout(() => {
+    document.getElementById('gaugeFill').style.strokeDashoffset = offset;
+  }, 200);
+
+  /* animate the number */
+  let cur = 0;
+  const step = Math.max(1, Math.ceil(score / 30));
+  const iv = setInterval(() => {
+    cur = Math.min(score, cur + step);
+    document.getElementById('gaugeScore').textContent = cur;
+    if (cur >= score) clearInterval(iv);
+  }, 40);
+
+  const STATUS = {
+    excellent: { label:'Excellent', desc:'Your cycles are beautifully regular and consistent. Keep doing what you\'re doing 🌸' },
+    good:      { label:'Good',      desc:'Your cycle pattern looks healthy. Small variations are normal.' },
+    moderate:  { label:'Moderate',  desc:'Some variability detected. Tracking consistently will help reveal patterns.' },
+    attention: { label:'Needs care', desc:'Notable variation detected. Consider discussing your cycle with a healthcare professional.' },
+    unknown:   { label:'Not enough data', desc:'Log at least 2 period start dates to see your health score.' }
+  };
+  const s = STATUS[h.level] || STATUS.unknown;
+  document.getElementById('gaugeStatus').textContent = s.label;
+  document.getElementById('gaugeDesc').textContent = s.desc;
+}
+renderGauge();
+
+/* =========================================================
+   8. RENDER — BIG CHART
+   ========================================================= */
+function renderChart(){
+  const svg = document.getElementById('chartSvg');
+  svg.innerHTML = '';
+
+  const W = 820, H = 300;
+  const PAD_L = 46, PAD_R = 24, PAD_T = 26, PAD_B = 44;
+  const innerW = W - PAD_L - PAD_R;
+  const innerH = H - PAD_T - PAD_B;
+
+  const NS = 'http://www.w3.org/2000/svg';
+
+  function el(tag, attrs, parent){
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    (parent || svg).appendChild(e);
+    return e;
+  }
+
+  /* empty state */
+  if (n < 1){
+    el('text', {
+      x: W/2, y: H/2, 'text-anchor':'middle',
+      'font-size':'14', fill:'#c8a0ba'
+    }).textContent = 'Log at least 2 periods to see the chart 🌸';
+    return;
+  }
+
+  /* chart data */
+  const values = cycleLengths;
+  const count = values.length;
+
+  /* y range: fixed to include normal band + min/max with padding */
+  const dataMin = Math.min(...values);
+  const dataMax = Math.max(...values);
+  const yMin = Math.min(18, dataMin - 2);
+  const yMax = Math.max(42, dataMax + 2);
+
+  const yScale = v => PAD_T + innerH - ((v - yMin) / (yMax - yMin)) * innerH;
+
+  /* x positions */
+  const xStep = count > 1 ? innerW / (count - 1) : 0;
+  const xScale = i => count === 1 ? PAD_L + innerW/2 : PAD_L + i * xStep;
+
+  /* --- Normal range shaded band (21–35) --- */
+  el('rect', {
+    x: PAD_L, y: yScale(35),
+    width: innerW, height: yScale(21) - yScale(35),
+    fill: '#e3f9ee', opacity: '.45'
+  });
+  el('text', {
+    x: PAD_L + innerW - 6, y: yScale(35) - 6,
+    'text-anchor':'end',
+    'font-size':'10', fill:'#0e8c50', 'font-weight':'500'
+  }).textContent = 'Normal range (21–35 days)';
+
+  /* --- Y-axis grid + labels --- */
+  [20, 25, 30, 35, 40].forEach(v => {
+    if (v < yMin || v > yMax) return;
+    const y = yScale(v);
+    el('line', {
+      x1: PAD_L, y1: y, x2: PAD_L + innerW, y2: y,
+      stroke: '#f7dce9', 'stroke-width':'1', 'stroke-dasharray':'3 4'
+    });
+    el('text', {
+      x: PAD_L - 8, y: y + 4,
+      'text-anchor':'end',
+      'font-size':'10', fill:'#c8a0ba',
+      'font-family':'JetBrains Mono, monospace'
+    }).textContent = v;
+  });
+
+  /* --- Bars --- */
+  const barW = Math.max(10, Math.min(36, innerW / count * 0.55));
+  values.forEach((v, i) => {
+    const x = xScale(i);
+    const y = yScale(v);
+    const h = PAD_T + innerH - y;
+
+    /* bar with rounded top */
+    el('rect', {
+      x: x - barW/2, y: y,
+      width: barW, height: h,
+      rx: 5, ry: 5,
+      fill: 'url(#barGrad)',
+      opacity: '.92'
+    });
+
+    /* value label */
+    el('text', {
+      x: x, y: y - 6,
+      'text-anchor':'middle',
+      'font-size':'10.5', 'font-weight':'600',
+      fill: '#8e2b5c',
+      'font-family':'JetBrains Mono, monospace'
+    }).textContent = v;
+  });
+
+  /* --- Line connecting midpoints --- */
+  const linePoints = values.map((v, i) => `${xScale(i)},${yScale(v)}`).join(' ');
+  el('polyline', {
+    points: linePoints,
+    fill: 'none',
+    stroke: '#b06bd6',
+    'stroke-width': '2',
+    opacity: '.55',
+    'stroke-linejoin': 'round'
+  });
+
+  /* --- Trend line (linear regression) --- */
+  if (count >= 2){
+    const reg = linearRegression(values);
+    const x0 = xScale(0);
+    const x1 = xScale(count - 1);
+    const y0 = yScale(reg.intercept);
+    const y1 = yScale(reg.intercept + reg.slope * (count - 1));
+
+    el('line', {
+      x1: x0, y1: y0, x2: x1, y2: y1,
+      stroke: '#ff6b9d',
+      'stroke-width': '2.5',
+      'stroke-dasharray': '7 5',
+      'stroke-linecap': 'round'
+    });
+
+    /* label at the end */
+    const trendLabel = Math.abs(reg.slope) < 0.4 ? 'Stable trend'
+                      : reg.slope > 0 ? `↑ +${reg.slope.toFixed(2)}d / cycle`
+                      : `↓ ${reg.slope.toFixed(2)}d / cycle`;
+    el('text', {
+      x: x1 - 4, y: y1 - 10,
+      'text-anchor':'end',
+      'font-size':'10', 'font-weight':'600',
+      fill: '#c9427e',
+      'font-family':'JetBrains Mono, monospace'
+    }).textContent = trendLabel;
+  }
+
+  /* --- Dots on line --- */
+  values.forEach((v, i) => {
+    el('circle', {
+      cx: xScale(i), cy: yScale(v),
+      r: 3.5, fill: '#fff',
+      stroke: '#b06bd6', 'stroke-width': '2'
+    });
+  });
+
+  /* --- X-axis labels (period number) --- */
+  values.forEach((v, i) => {
+    el('text', {
+      x: xScale(i), y: PAD_T + innerH + 20,
+      'text-anchor':'middle',
+      'font-size':'10', fill:'#c8a0ba',
+      'font-family':'JetBrains Mono, monospace'
+    }).textContent = 'C' + (i + 1);
+  });
+
+  /* --- Define gradient --- */
+  const defs = document.createElementNS(NS, 'defs');
+  const grad = document.createElementNS(NS, 'linearGradient');
+  grad.setAttribute('id', 'barGrad');
+  grad.setAttribute('x1', '0');
+  grad.setAttribute('y1', '0');
+  grad.setAttribute('x2', '0');
+  grad.setAttribute('y2', '1');
+  const s1 = document.createElementNS(NS, 'stop');
+  s1.setAttribute('offset', '0%');
+  s1.setAttribute('stop-color', '#ff9ec4');
+  const s2 = document.createElementNS(NS, 'stop');
+  s2.setAttribute('offset', '100%');
+  s2.setAttribute('stop-color', '#b06bd6');
+  grad.appendChild(s1);
+  grad.appendChild(s2);
+  defs.appendChild(grad);
+  svg.insertBefore(defs, svg.firstChild);
+}
+renderChart();
+
+/* =========================================================
+   9. RENDER — PATTERN DETECTION
+   ========================================================= */
+function renderPatterns(){
+  const list = document.getElementById('patternList');
+  list.innerHTML = '';
+
+  if (n < 2){
+    list.innerHTML = `
+      <div class="pattern-item">
+        <div class="pi-icon info">ℹ️</div>
+        <div class="pi-body">
+          <div class="pi-title">Not enough data yet</div>
+          <div class="pi-text">Add at least 2 period start dates to detect cycle patterns.</div>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const sorted = mergeSort(cycleLengths, (a,b) => a-b);
+  const sd = stdDev(cycleLengths);
+  const avg = mean(cycleLengths);
+  const med = median(sorted);
+  const minV = sorted[0];
+  const maxV = sorted[sorted.length - 1];
+  const outliers = detectOutliers(cycleLengths, 2);
+
+  /* 1. Variability pattern */
+  let varIcon = 'good', varTitle = 'Very stable cycle', varText = '';
+  if (sd < 2){
+    varIcon = 'good'; varTitle = 'Very stable cycle';
+    varText = `Your cycles vary by only ~${sd.toFixed(1)} days. Beautifully regular.`;
+  } else if (sd < 4){
+    varIcon = 'good'; varTitle = 'Stable cycle';
+    varText = `Variation of ~${sd.toFixed(1)} days is well within normal range.`;
+  } else if (sd < 7){
+    varIcon = 'warn'; varTitle = 'Variable cycle';
+    varText = `Variation of ~${sd.toFixed(1)} days. Stress, sleep, and diet can shift cycles.`;
+  } else {
+    varIcon = 'bad'; varTitle = 'High variability';
+    varText = `Variation of ~${sd.toFixed(1)} days. Consider discussing this with a healthcare professional.`;
+  }
+  list.innerHTML += `
+    <div class="pattern-item">
+      <div class="pi-icon ${varIcon}">${varIcon === 'good' ? '✅' : varIcon === 'warn' ? '⚠️' : '❗'}</div>
+      <div class="pi-body">
+        <div class="pi-title">${varTitle} <span class="pi-badge">σ = ${sd.toFixed(2)}</span></div>
+        <div class="pi-text">${varText}</div>
+      </div>
+    </div>`;
+
+  /* 2. Range */
+  list.innerHTML += `
+    <div class="pattern-item">
+      <div class="pi-icon info">📊</div>
+      <div class="pi-body">
+        <div class="pi-title">Range: ${minV}–${maxV} days <span class="pi-badge">Median ${med}</span></div>
+        <div class="pi-text">Your shortest cycle was ${minV} days and longest was ${maxV} days. Average: ${avg.toFixed(1)} days.</div>
+      </div>
+    </div>`;
+
+  /* 3. Outliers */
+  if (outliers.length){
+    const list_txt = outliers.map(o => `${o.value}d`).join(', ');
+    list.innerHTML += `
+      <div class="pattern-item">
+        <div class="pi-icon warn">🔎</div>
+        <div class="pi-body">
+          <div class="pi-title">Unusual cycles detected <span class="pi-badge">Z &gt; 2</span></div>
+          <div class="pi-text">${outliers.length} cycle${outliers.length>1?'s':''} stood out from the rest: ${list_txt}. Occasional outliers are usually normal.</div>
+        </div>
+      </div>`;
+  } else {
+    list.innerHTML += `
+      <div class="pattern-item">
+        <div class="pi-icon good">✨</div>
+        <div class="pi-body">
+          <div class="pi-title">No outliers found <span class="pi-badge">Z ≤ 2</span></div>
+          <div class="pi-text">All your cycles fall within a normal spread — no unusual values detected.</div>
+        </div>
+      </div>`;
+  }
+
+  /* 4. Trend */
+  const reg = linearRegression(cycleLengths);
+  let tIcon = 'good', tText = '';
+  if (Math.abs(reg.slope) < 0.4){
+    tIcon = 'good'; tText = 'Cycles are holding steady — no significant change over time.';
+  } else if (reg.slope > 0){
+    tIcon = 'info'; tText = `Cycles are lengthening by about ${reg.slope.toFixed(2)} days per cycle.`;
+  } else {
+    tIcon = 'info'; tText = `Cycles are shortening by about ${Math.abs(reg.slope).toFixed(2)} days per cycle.`;
+  }
+  list.innerHTML += `
+    <div class="pattern-item">
+      <div class="pi-icon ${tIcon}">📈</div>
+      <div class="pi-body">
+        <div class="pi-title">Trend (linear regression) <span class="pi-badge">slope ${reg.slope.toFixed(2)}</span></div>
+        <div class="pi-text">${tText}</div>
+      </div>
+    </div>`;
+}
+renderPatterns();
+
+/* =========================================================
+   10. RENDER — PREDICTIONS
+   ========================================================= */
+function renderPredictions(){
+  const list = document.getElementById('predList');
+  list.innerHTML = '';
+
+  if (n < 1){
+    list.innerHTML = `
+      <div class="pattern-item">
+        <div class="pi-icon info">ℹ️</div>
+        <div class="pi-body">
+          <div class="pi-title">No predictions yet</div>
+          <div class="pi-text">Log a period to start generating predictions.</div>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const avg = movingAverage(cycleLengths, 3) || cfg.cycleLength;
+  const sd = stdDev(cycleLengths);
+
+  /* confidence based on sd */
+  let confLabel = 'High', confClass = 'high';
+  if (sd > 7){ confLabel = 'Low'; confClass = 'low'; }
+  else if (sd > 4){ confLabel = 'Medium'; confClass = 'med'; }
+
+  /* starting point = latest period + avg */
+  const latest = new Date(history[0].date);
+  latest.setHours(0,0,0,0);
+
+  for (let i = 1; i <= 3; i++){
+    const est = new Date(latest);
+    est.setDate(est.getDate() + Math.round(avg * i));
+
+    /* confidence drops over further predictions */
+    let conf = confClass;
+    let confTxt = confLabel;
+    if (i === 2 && confClass === 'high'){ conf = 'med'; confTxt = 'Medium'; }
+    if (i === 3){ conf = confClass === 'high' ? 'med' : 'low'; confTxt = conf === 'med' ? 'Medium' : 'Low'; }
+
+    const item = document.createElement('div');
+    item.className = 'pred-item';
+    item.innerHTML = `
+      <div class="pred-num">C+${i}</div>
+      <div class="pred-meta">
+        <div class="pred-date">${est.toLocaleDateString('en-US', { weekday:'short', day:'numeric', month:'long', year:'numeric' })}</div>
+        <div class="pred-detail">Predicted cycle length: ${Math.round(avg)} days</div>
+      </div>
+      <div class="pred-confidence ${conf}">${confTxt}</div>
+    `;
+    list.appendChild(item);
+  }
+
+  /* note */
+  const note = document.createElement('div');
+  note.className = 'pattern-item';
+  note.style.marginTop = '4px';
+  note.innerHTML = `
+    <div class="pi-icon info">ℹ️</div>
+    <div class="pi-body">
+      <div class="pi-title">How these are calculated</div>
+      <div class="pi-text">Using the <strong>Moving Average</strong> of your last 3 cycles${sd > 4 ? '. Variation is high, so treat these dates as approximate.' : '.'} Predictions become less certain the further ahead you look.</div>
+    </div>
+  `;
+  list.appendChild(note);
+}
+renderPredictions();
+
+/* =========================================================
+   11. RENDER — CONDITION TIPS
+   ========================================================= */
+const TIPS = {
+  normal: [
+    { icon:'🌿', title:'Keep your rhythm', text:'Your regular pattern is a great baseline. Logging every period keeps predictions sharp.' },
+    { icon:'💧', title:'Stay hydrated', text:'Drinking enough water throughout your cycle reduces bloating and fatigue.' },
+    { icon:'🥗', title:'Iron-rich foods', text:'During your period, add leafy greens, dates, and lentils to support your energy.' }
+  ],
+  pcod: [
+    { icon:'⚖️', title:'Consistency beats perfection', text:'PCOD can make cycles longer or less predictable. Logging every period — even irregular ones — reveals patterns.' },
+    { icon:'🏃‍♀️', title:'Move daily', text:'Even 20–30 minutes of walking, yoga, or cycling helps balance insulin and hormones.' },
+    { icon:'🥗', title:'Low-GI eating', text:'Whole grains, veggies, and lean protein can reduce PCOD symptoms over time.' }
+  ],
+  pcos: [
+    { icon:'🦋', title:'Irregular is okay', text:'PCOS cycles can be unpredictable. Tracking anyway builds the picture your doctor needs.' },
+    { icon:'😴', title:'Protect your sleep', text:'7–8 hours a night helps regulate cortisol and the hormones involved in PCOS.' },
+    { icon:'🩺', title:'Regular check-ins', text:'Routine blood work with your doctor catches changes early and guides treatment.' }
+  ]
+};
+
+function renderTips(){
+  const list = document.getElementById('tipsList');
+  list.innerHTML = '';
+  (TIPS[condition] || TIPS.normal).forEach(t => {
+    const item = document.createElement('div');
+    item.className = 'tip-item';
+    item.innerHTML = `
+      <div class="tip-emoji">${t.icon}</div>
+      <div class="tip-body">
+        <div class="tip-title">${t.title}</div>
+        <div class="tip-text">${t.text}</div>
+      </div>
+    `;
+    list.appendChild(item);
+  });
+}
+renderTips();
+
+/* =========================================================
+   12. SIDEBAR + LOGOUT
+   ========================================================= */
+const sidebar = document.getElementById('sidebar');
+const backdrop = document.getElementById('sidebarBackdrop');
+document.getElementById('menuBtn').addEventListener('click', () => {
+  sidebar.classList.add('open'); backdrop.classList.add('show');
+});
+backdrop.addEventListener('click', () => {
+  sidebar.classList.remove('open'); backdrop.classList.remove('show');
+});
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  try {
+    localStorage.removeItem('sakhi_logged_in');
+    localStorage.removeItem('sakhi_remember');
+  } catch(e){}
+  window.location.href = 'login.html';
+});
+
+/* =========================================================
+   13. TOAST
+   ========================================================= */
+function showToast(msg){
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>
