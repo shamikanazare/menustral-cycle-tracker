@@ -192,7 +192,7 @@ function buildIntervals(){
   return merged;
 }
 let intervals = buildIntervals();
-const lastPeriod = history.length ? strip(new Date(history[0].date)) : today;
+let lastPeriod = history.length ? strip(new Date(history[0].date)) : today;
 
 function avgCycle(){
   if(history.length<2) return CFG.cycle;
@@ -206,7 +206,7 @@ function avgCycle(){
   const last3 = gaps.slice(-3);
   return Math.round(last3.reduce((a,b)=>a+b,0)/last3.length);
 }
-const effCycle = avgCycle();
+let effCycle = avgCycle();
 
 function inPeriod(date){
   const t = strip(date).getTime();
@@ -351,6 +351,8 @@ function logPeriod(len){
   history.sort((a,b)=>new Date(b.date)-new Date(a.date));
   set('sakhi_period_history',history);
   intervals = buildIntervals();
+  lastPeriod = history.length ? strip(new Date(history[0].date)) : today;
+  effCycle = avgCycle();
   render();
   closeModal();
   toast('Period logged 🌸');
@@ -367,6 +369,8 @@ function removePeriod(){
   history.splice(idx,1);
   set('sakhi_period_history',history);
   intervals = buildIntervals();
+  lastPeriod = history.length ? strip(new Date(history[0].date)) : today;
+  effCycle = avgCycle();
   render();
   closeModal();
   toast('Removed');
