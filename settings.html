@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sakhi · Settings</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--pink:#ff6b9d;--purple:#b06bd6;--rose-deep:#c9427e;--text:#4a2340;--muted:#a5839a;--line:#f7dce9;--line-soft:#fbeaf3;--error:#e5484d;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+body{font-family:'Outfit',system-ui,sans-serif;background:#fff7fb;color:var(--text);min-height:100vh;overflow:hidden;}
+.shell{display:flex;height:100vh;}
+
+/* SIDEBAR */
+.sidebar{width:236px;flex-shrink:0;background:linear-gradient(180deg,#fff8fc,#fff1f8);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:22px 16px 18px;overflow-y:auto;}
+.logo{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:700;color:#8e2b5c;padding:0 6px;margin-bottom:26px;}
+.logo-mark{width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,var(--pink),var(--purple));display:grid;place-items:center;box-shadow:0 8px 18px -6px rgba(255,107,157,.85);}
+.logo-mark svg{width:18px;height:18px;}
+.nav-section{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.2px;color:#c8a0ba;padding:0 10px;margin:14px 0 8px;}
+.nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:11px;font-size:13.5px;font-weight:500;color:#8a5c7c;text-decoration:none;cursor:pointer;transition:all .18s;margin-bottom:2px;}
+.nav-item svg{width:17px;height:17px;flex-shrink:0;}
+.nav-item:hover{background:#ffeef6;color:var(--rose-deep);}
+.nav-item.active{background:linear-gradient(100deg,#ffd6e8,#f2d5f7);color:#8e2b5c;font-weight:600;}
+.sidebar-foot{margin-top:auto;padding-top:18px;}
+.user-card{display:flex;align-items:center;gap:10px;padding:10px 11px;background:#fff;border:1px solid var(--line);border-radius:14px;}
+.user-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;display:grid;place-items:center;font-size:15px;font-weight:600;flex-shrink:0;}
+.user-meta{min-width:0;flex:1;}
+.user-name{font-size:13px;font-weight:600;color:#5c2a4c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-tag{font-size:10.5px;color:var(--muted);text-transform:capitalize;}
+.logout-btn{background:none;border:none;cursor:pointer;padding:6px;border-radius:8px;color:#c8a0ba;display:grid;place-items:center;}
+.logout-btn:hover{color:var(--error);background:#fff0f0;}
+.logout-btn svg{width:15px;height:15px;}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;}
+.topbar{display:flex;align-items:center;gap:16px;padding:20px 28px 16px;flex-shrink:0;}
+.topbar h1{font-size:22px;font-weight:600;color:#5c2a4c;margin-bottom:3px;}
+.topbar h1 span{background:linear-gradient(90deg,#e8558f,#a855f7);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.topbar p{font-size:12.5px;color:var(--muted);}
+.content{flex:1;overflow-y:auto;padding:0 28px 28px;}
+.content::-webkit-scrollbar{width:8px;}
+.content::-webkit-scrollbar-thumb{background:#f8c8dd;border-radius:99px;}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:0 10px 28px -20px rgba(201,66,126,.35);}
+.card-full{grid-column:1 / span 2;}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.card-title{font-size:14px;font-weight:600;color:#7c3a5c;display:flex;align-items:center;gap:8px;}
+.card-title svg{width:16px;height:16px;color:var(--pink);}
+
+/* FIELDS */
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:12px;font-weight:500;color:#8a5c7c;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;}
+.field input{width:100%;padding:11px 13px;font-family:inherit;font-size:14px;color:var(--text);background:#fff8fb;border:1.5px solid var(--line);border-radius:11px;outline:none;transition:border-color .2s,box-shadow .2s;}
+.field input:focus{background:#fff;border-color:var(--pink);box-shadow:0 0 0 4px rgba(255,107,157,.14);}
+.field input[readonly]{background:#fbeaf3;color:#a5839a;cursor:default;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.input-suffix{position:relative;}
+.input-suffix input{padding-right:38px;}
+.input-suffix span{position:absolute;right:13px;top:50%;transform:translateY(-50%);font-size:13px;color:#c8a0ba;font-weight:500;}
+
+/* CONDITION CARDS */
+.cond-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
+.cond-card{position:relative;cursor:pointer;display:block;}
+.cond-card input{position:absolute;opacity:0;pointer-events:none;}
+.cond-inner{display:flex;flex-direction:column;align-items:center;text-align:center;gap:3px;padding:12px 8px 10px;background:#fff;border:1.5px solid #f7dce9;border-radius:13px;transition:all .2s;height:100%;}
+.cond-card:hover .cond-inner{border-color:#f8b8d4;transform:translateY(-1px);}
+.cond-emoji{font-size:18px;line-height:1;margin-bottom:2px;}
+.cond-title{font-size:13px;font-weight:600;color:#7c3a5c;}
+.cond-desc{font-size:10px;line-height:1.35;color:#bb8aa8;}
+.cond-card input:checked + .cond-inner{border-color:var(--pink);background:linear-gradient(160deg,#fff2f8,#ffe6f2);box-shadow:0 8px 20px -10px rgba(255,107,157,.95),0 0 0 3px rgba(255,107,157,.13);}
+.cond-card input:checked + .cond-inner .cond-title{color:var(--rose-deep);}
+.cycle-inputs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:4px;}
+
+/* BUTTONS */
+.btn-primary{width:100%;padding:12px;font-family:inherit;font-size:13.5px;font-weight:600;color:#fff;background:linear-gradient(100deg,#ff7fa9,#f26aa0,#b06bd6);border:none;border-radius:11px;cursor:pointer;box-shadow:0 12px 24px -12px rgba(242,106,160,.8);transition:transform .18s,box-shadow .25s;}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 18px 30px -12px rgba(242,106,160,1);}
+.btn-danger{width:100%;padding:11px;font-family:inherit;font-size:13px;font-weight:600;color:#c53030;background:#fff5f5;border:1.5px solid #fbd5d5;border-radius:11px;cursor:pointer;margin-bottom:8px;transition:all .18s;}
+.btn-danger:hover{background:#ffe6e6;border-color:#f4b4b6;}
+.btn-danger.red{color:#fff;background:linear-gradient(100deg,#e5484d,#c53030);border:none;box-shadow:0 8px 20px -10px rgba(229,72,77,.8);}
+.btn-danger.red:hover{transform:translateY(-1px);}
+
+/* ABOUT CARD */
+.about-logo{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+.about-mark{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--pink),var(--purple));display:grid;place-items:center;box-shadow:0 10px 22px -8px rgba(255,107,157,.85);}
+.about-mark svg{width:24px;height:24px;}
+.about-name{font-size:22px;font-weight:700;color:#8e2b5c;}
+.about-version{font-size:11px;color:#c8a0ba;margin-top:2px;}
+.about-tagline{font-size:14px;color:#a2668a;margin-bottom:14px;line-height:1.5;}
+.about-credit{font-size:12px;color:#c8a0ba;padding:10px 13px;background:#fff8fb;border-radius:10px;border:1px solid var(--line-soft);}
+.about-credit strong{color:#8e2b5c;}
+
+/* DIVIDER */
+.divider{height:1px;background:var(--line-soft);margin:16px 0;}
+
+/* TOAST */
+.toast{position:fixed;top:22px;left:50%;transform:translate(-50%,-130%);z-index:99;display:flex;align-items:center;gap:11px;padding:13px 20px;background:#fff;border-radius:14px;box-shadow:0 20px 46px -14px rgba(201,66,126,.45);font-size:13.5px;font-weight:500;color:var(--text);transition:transform .45s cubic-bezier(.2,1.3,.4,1);}
+.toast.show{transform:translate(-50%,0);}
+.toast .tick{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--purple));display:grid;place-items:center;}
+.toast .tick svg{width:14px;height:14px;}
+
+/* RESPONSIVE */
+@media(max-width:900px){.grid{grid-template-columns:1fr;}.card-full{grid-column:1;}}
+@media(max-width:700px){.sidebar{display:none;}.main{overflow:auto;}.content{padding:0 16px 24px;}.topbar{padding:16px;}}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast">
+  <span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+  <span id="toastMsg">Saved!</span>
+</div>
+
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo">
+      <span class="logo-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2.5c3.5 3 6 6.2 6 9.6a6 6 0 0 1-12 0c0-3.4 2.5-6.6 6-9.6z"/><path d="M12 18.5v3"/>
+        </svg>
+      </span>
+      Sakhi
+    </div>
+    <div class="nav-section">Menu</div>
+    <a class="nav-item" href="dashboard.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+      Dashboard
+    </a>
+    <a class="nav-item" href="chatbot.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Health Assistant
+    </a>
+    <a class="nav-item" href="calendar.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Calendar
+    </a>
+    <a class="nav-item" href="insights.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+      Insights
+    </a>
+    <a class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Settings
+    </a>
+    <div class="sidebar-foot">
+      <div class="user-card">
+        <div class="user-avatar" id="sidebarAvatar">S</div>
+        <div class="user-meta">
+          <div class="user-name" id="sidebarName">User</div>
+          <div class="user-tag" id="sidebarTag">normal</div>
+        </div>
+        <button class="logout-btn" id="logoutBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h1>Settings <span>&amp; Profile</span> ⚙️</h1>
+        <p>Manage your account, condition settings, and data.</p>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="grid">
+
+        <!-- PROFILE CARD -->
+        <div class="card card-full">
+          <div class="card-head">
+            <div class="card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              Profile
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Full Name</label>
+              <input type="text" id="profileName" placeholder="Your full name">
+            </div>
+            <div class="field">
+              <label>Email</label>
+              <input type="email" id="profileEmail" readonly placeholder="—">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Age</label>
+              <input type="number" id="profileAge" min="10" max="60" placeholder="e.g. 22">
+            </div>
+            <div class="field">
+              <label>Weight</label>
+              <div class="input-suffix">
+                <input type="number" id="profileWeight" min="30" max="200" placeholder="e.g. 55">
+                <span>kg</span>
+              </div>
+            </div>
+          </div>
+          <button class="btn-primary" id="saveProfileBtn">Save Profile</button>
+        </div>
+
+        <!-- CONDITION CARD -->
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.3h6c0-1 .4-1.8 1-2.3A7 7 0 0 0 12 2z"/></svg>
+              Condition &amp; Cycle
+            </div>
+          </div>
+          <div class="cond-grid">
+            <label class="cond-card">
+              <input type="radio" name="condition" value="normal">
+              <div class="cond-inner">
+                <div class="cond-emoji">🌸</div>
+                <div class="cond-title">Normal</div>
+                <div class="cond-desc">Regular 28-day cycle</div>
+              </div>
+            </label>
+            <label class="cond-card">
+              <input type="radio" name="condition" value="pcod">
+              <div class="cond-inner">
+                <div class="cond-emoji">💊</div>
+                <div class="cond-title">PCOD</div>
+                <div class="cond-desc">~35-day cycle</div>
+              </div>
+            </label>
+            <label class="cond-card">
+              <input type="radio" name="condition" value="pcos">
+              <div class="cond-inner">
+                <div class="cond-emoji">🔬</div>
+                <div class="cond-title">PCOS</div>
+                <div class="cond-desc">~35-day cycle</div>
+              </div>
+            </label>
+          </div>
+          <div class="divider"></div>
+          <div class="cycle-inputs">
+            <div class="field">
+              <label>Cycle Length (days)</label>
+              <input type="number" id="cycleLen" min="21" max="45" placeholder="28">
+            </div>
+            <div class="field">
+              <label>Period Length (days)</label>
+              <input type="number" id="periodLen" min="2" max="10" placeholder="5">
+            </div>
+          </div>
+          <button class="btn-primary" id="saveCondBtn">Save Condition</button>
+        </div>
+
+        <!-- DATA MANAGEMENT CARD -->
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+              Data Management
+            </div>
+          </div>
+          <p style="font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.55;">Manage or delete your tracked data. These actions cannot be undone.</p>
+          <button class="btn-danger" id="clearPeriodBtn">🗑️ Clear Period History</button>
+          <button class="btn-danger" id="clearSymptomsBtn">🗑️ Clear Symptom Logs</button>
+          <div class="divider"></div>
+          <button class="btn-danger red" id="resetAllBtn">⚠️ Reset All Data &amp; Log Out</button>
+        </div>
+
+        <!-- ABOUT CARD -->
+        <div class="card card-full">
+          <div class="about-logo">
+            <div class="about-mark">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5c3.5 3 6 6.2 6 9.6a6 6 0 0 1-12 0c0-3.4 2.5-6.6 6-9.6z"/><path d="M12 18.5v3"/></svg>
+            </div>
+            <div>
+              <div class="about-name">Sakhi</div>
+              <div class="about-version">Version 1.1.0</div>
+            </div>
+          </div>
+          <div class="about-tagline">Made with 💜 for every cycle — a smart, algorithm-powered menstrual health tracker built to help you understand your body better.</div>
+          <div class="about-credit">Built by <strong>Kadam Madhushree</strong> &amp; <strong>Shamika Nazare</strong> · SEM V AOA Project · 2025</div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+function safeJSON(k,f){try{return JSON.parse(localStorage.getItem(k))||f;}catch(e){return f;}}
+function safeSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+
+let user = safeJSON('sakhi_user', null);
+if(!user||!user.fullName) user={fullName:'User',email:'',condition:'normal',cycleLength:28,periodLength:5};
+
+const COND = {normal:'Normal',pcod:'PCOD',pcos:'PCOS'};
+const COND_CFG = {normal:{cycleLength:28,periodLength:5},pcod:{cycleLength:35,periodLength:6},pcos:{cycleLength:35,periodLength:6}};
+const firstName = user.fullName.trim().split(/\s+/)[0];
+
+// Populate sidebar
+document.getElementById('sidebarName').textContent = user.fullName;
+document.getElementById('sidebarAvatar').textContent = firstName.charAt(0).toUpperCase();
+document.getElementById('sidebarTag').textContent = COND[user.condition]||'Normal';
+
+// Populate profile fields
+document.getElementById('profileName').value = user.fullName || '';
+document.getElementById('profileEmail').value = user.email || '';
+document.getElementById('profileAge').value = user.age || '';
+document.getElementById('profileWeight').value = user.weightKg || '';
+
+// Populate condition
+const cond = (user.condition||'normal').toLowerCase();
+const radio = document.querySelector(`input[name="condition"][value="${cond}"]`);
+if(radio) radio.checked = true;
+
+// Populate cycle inputs
+document.getElementById('cycleLen').value = user.cycleLength || COND_CFG[cond]?.cycleLength || 28;
+document.getElementById('periodLen').value = user.periodLength || COND_CFG[cond]?.periodLength || 5;
+
+// Auto-fill cycle defaults when condition changes
+document.querySelectorAll('input[name="condition"]').forEach(r=>{
+  r.addEventListener('change',()=>{
+    const cfg = COND_CFG[r.value];
+    if(cfg){
+      document.getElementById('cycleLen').value = cfg.cycleLength;
+      document.getElementById('periodLen').value = cfg.periodLength;
+    }
+  });
+});
+
+// Save Profile
+document.getElementById('saveProfileBtn').addEventListener('click',()=>{
+  const name = document.getElementById('profileName').value.trim();
+  if(!name){showToast('Please enter your name');return;}
+  user.fullName = name;
+  user.age = parseInt(document.getElementById('profileAge').value)||user.age;
+  user.weightKg = parseInt(document.getElementById('profileWeight').value)||user.weightKg;
+  safeSet('sakhi_user',user);
+  document.getElementById('sidebarName').textContent = user.fullName;
+  document.getElementById('sidebarAvatar').textContent = user.fullName.trim().charAt(0).toUpperCase();
+  showToast('Profile updated 🌸');
+});
+
+// Save Condition
+document.getElementById('saveCondBtn').addEventListener('click',()=>{
+  const sel = document.querySelector('input[name="condition"]:checked');
+  if(!sel){showToast('Please select a condition');return;}
+  const cl = parseInt(document.getElementById('cycleLen').value);
+  const pl = parseInt(document.getElementById('periodLen').value);
+  if(!cl||cl<21||cl>45){showToast('Cycle length must be 21–45 days');return;}
+  if(!pl||pl<2||pl>10){showToast('Period length must be 2–10 days');return;}
+  user.condition = sel.value;
+  user.cycleLength = cl;
+  user.periodLength = pl;
+  safeSet('sakhi_user',user);
+  document.getElementById('sidebarTag').textContent = COND[user.condition]||'Normal';
+  showToast('Condition saved ✅');
+});
+
+// Clear period history
+document.getElementById('clearPeriodBtn').addEventListener('click',()=>{
+  if(!confirm('Clear all period history? This cannot be undone.')) return;
+  localStorage.removeItem('sakhi_period_history');
+  showToast('Period history cleared');
+});
+
+// Clear symptom logs
+document.getElementById('clearSymptomsBtn').addEventListener('click',()=>{
+  if(!confirm('Clear all symptom & mood logs? This cannot be undone.')) return;
+  localStorage.removeItem('sakhi_symptoms');
+  showToast('Symptom logs cleared');
+});
+
+// Reset all data
+document.getElementById('resetAllBtn').addEventListener('click',()=>{
+  if(!confirm('This will delete ALL your data and log you out. Are you sure?')) return;
+  if(!confirm('Are you absolutely sure? This action is irreversible.')) return;
+  const keys = Object.keys(localStorage).filter(k=>k.startsWith('sakhi_'));
+  keys.forEach(k=>localStorage.removeItem(k));
+  window.location.href = 'register.html';
+});
+
+// Logout
+document.getElementById('logoutBtn').addEventListener('click',()=>{
+  try{localStorage.removeItem('sakhi_logged_in');localStorage.removeItem('sakhi_remember');}catch(e){}
+  window.location.href = 'login.html';
+});
+
+// Toast
+function showToast(msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toastMsg').textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+</script>
+</body>
+</html>
