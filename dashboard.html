@@ -183,6 +183,11 @@ body{font-family:'Outfit',system-ui,sans-serif;background:#fff7fb;color:var(--te
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       Settings
     </a>
+    <div class="nav-section">Developer</div>
+    <a class="nav-item" href="algo-demo.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Algorithm Demos
+    </a>
     <div class="sidebar-foot">
       <div class="user-card">
         <div class="user-avatar" id="sidebarAvatar">M</div>
@@ -285,33 +290,7 @@ body{font-family:'Outfit',system-ui,sans-serif;background:#fff7fb;color:var(--te
           </div>
         </div>
 
-        <div class="card sort-compare">
-          <div class="card-head">
-            <div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M6 12h12M10 18h4"/></svg>Sorting race — Merge vs Bubble</div>
-            <button class="btn-ghost" id="runSortBtn">Run race</button>
-          </div>
-          <div class="sort-race">
-            <div class="race-box" id="mergeBox"><div class="race-label">Merge Sort · O(n log n)</div><div class="race-time" id="mergeTime">—<small>ms</small></div><div class="race-sub" id="mergeMeta">—</div></div>
-            <div class="race-box" id="bubbleBox"><div class="race-label">Bubble Sort · O(n²)</div><div class="race-time" id="bubbleTime">—<small>ms</small></div><div class="race-sub" id="bubbleMeta">—</div></div>
-          </div>
-          <div class="sort-visual" id="sortVisual"></div>
-          <div class="algo-note" id="sortVerdict" style="text-align:center;">Click <em>Run race</em> to compare both sort algorithms.</div>
-        </div>
 
-        <div class="card search-demo">
-          <div class="card-head">
-            <div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Search — Linear vs Binary</div>
-            <span class="card-tag algo">O(n) vs O(log n)</span>
-          </div>
-          <div class="search-form">
-            <input type="number" id="searchTarget" placeholder="Enter a cycle length (e.g. 28)" min="10" max="60">
-            <button class="btn-primary" id="runSearchBtn">Search</button>
-          </div>
-          <div class="search-results">
-            <div class="search-box"><div class="sb-name">Linear Search</div><div class="sb-value" id="linearResult">—</div><div class="sb-hint" id="linearMeta">—</div></div>
-            <div class="search-box"><div class="sb-name">Binary Search</div><div class="sb-value" id="binaryResult">—</div><div class="sb-hint" id="binaryMeta">—</div></div>
-          </div>
-        </div>
 
         <div class="card pattern-card">
           <div class="card-head">
@@ -351,7 +330,7 @@ document.getElementById('greetName').textContent=firstName;
 const today=new Date();today.setHours(0,0,0,0);
 document.getElementById('todayDate').textContent=today.toLocaleDateString('en-US',{weekday:'short',day:'numeric',month:'long'});
 const CFG={normal:{cycleLength:28,periodLength:5},pcod:{cycleLength:35,periodLength:6},pcos:{cycleLength:35,periodLength:6}}[condition];
-function loadHistory(){const raw=safeJSON('sakhi_period_history',null);if(Array.isArray(raw)&&raw.length)return raw;const seed=[];for(let i=5;i>=1;i--){const d=new Date(today);d.setDate(d.getDate()-i*CFG.cycleLength+Math.round((Math.random()-0.5)*3));seed.push({date:d.toISOString().slice(0,10),length:CFG.periodLength});}safeSet('sakhi_period_history',JSON.stringify(seed));return seed;}
+function loadHistory(){const raw=safeJSON('sakhi_period_history',null);if(Array.isArray(raw)&&raw.length)return raw;return [];}
 let history=loadHistory();history.sort((a,b)=>new Date(b.date)-new Date(a.date));
 function mergeSort(a,c){if(a.length<=1)return a;const m=Math.floor(a.length/2);const L=mergeSort(a.slice(0,m),c);const R=mergeSort(a.slice(m),c);const o=[];let i=0,j=0;while(i<L.length&&j<R.length){if(c(L[i],R[j])<=0)o.push(L[i++]);else o.push(R[j++]);}while(i<L.length)o.push(L[i++]);while(j<R.length)o.push(R[j++]);return o;}
 function bubbleSort(a,c){const x=a.slice();let comp=0,sw=0;for(let i=0;i<x.length-1;i++){let s=false;for(let j=0;j<x.length-1-i;j++){comp++;if(c(x[j],x[j+1])>0){[x[j],x[j+1]]=[x[j+1],x[j]];sw++;s=true;}}if(!s)break;}return{sorted:x,comparisons:comp,swaps:sw};}
@@ -385,14 +364,24 @@ const angle=(cycleDay-1)/CFG.cycleLength*2*Math.PI;
 const dotX=100+90*Math.cos(angle-Math.PI/2);
 const dotY=100+90*Math.sin(angle-Math.PI/2);
 setTimeout(()=>{document.getElementById('ringFill').style.strokeDashoffset=CIRC*(1-progress);const d=document.getElementById('ringDot');d.setAttribute('cx',dotX);d.setAttribute('cy',dotY);d.setAttribute('stroke',meta.dot);},200);
-const nextPeriod=(()=>{let n=new Date(history[0].date);n.setHours(0,0,0,0);n.setDate(n.getDate()+CFG.cycleLength);while(n<=today)n.setDate(n.getDate()+CFG.cycleLength);return n;})();
-const daysToNext=Math.round((nextPeriod-today)/86400000);
-document.getElementById('statNextPeriod').textContent=daysToNext;
-document.getElementById('statNextPeriodDate').textContent='Around '+nextPeriod.toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric'});
-let ovuDate=new Date(history[0].date);ovuDate.setHours(0,0,0,0);ovuDate.setDate(ovuDate.getDate()+OV-1);
-while(ovuDate<today)ovuDate.setDate(ovuDate.getDate()+CFG.cycleLength);
-const daysToOvu=Math.round((ovuDate-today)/86400000);
-if(daysToOvu===0){document.getElementById('statOvulation').textContent='Today';document.getElementById('statOvulationHint').textContent='Peak fertility 💜';}else{document.getElementById('statOvulation').textContent=daysToOvu+'d';document.getElementById('statOvulationHint').textContent=ovuDate.toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric'});}
+const nextPeriod=(()=>{if(!history.length)return null;let n=new Date(history[0].date);n.setHours(0,0,0,0);n.setDate(n.getDate()+CFG.cycleLength);while(n<=today)n.setDate(n.getDate()+CFG.cycleLength);return n;})();
+const daysToNext=nextPeriod ? Math.round((nextPeriod-today)/86400000) : null;
+if(daysToNext!==null){
+  document.getElementById('statNextPeriod').textContent=daysToNext;
+  document.getElementById('statNextPeriodDate').textContent='Around '+nextPeriod.toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric'});
+} else {
+  document.getElementById('statNextPeriod').textContent='—';
+  document.getElementById('statNextPeriodDate').textContent='No data yet';
+}
+let ovuDate = null;
+if (history.length) {
+  ovuDate=new Date(history[0].date);ovuDate.setHours(0,0,0,0);ovuDate.setDate(ovuDate.getDate()+OV-1);
+  while(ovuDate<today)ovuDate.setDate(ovuDate.getDate()+CFG.cycleLength);
+}
+const daysToOvu=ovuDate ? Math.round((ovuDate-today)/86400000) : null;
+if(daysToOvu===0){document.getElementById('statOvulation').textContent='Today';document.getElementById('statOvulationHint').textContent='Peak fertility 💜';}
+else if(daysToOvu!==null){document.getElementById('statOvulation').textContent=daysToOvu+'d';document.getElementById('statOvulationHint').textContent=ovuDate.toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric'});}
+else {document.getElementById('statOvulation').textContent='—';document.getElementById('statOvulationHint').textContent='No data yet';}
 const histList=document.getElementById('historyList');
 function renderHistory(){document.getElementById('historyCount').textContent=history.length+' '+(history.length===1?'entry':'entries');histList.innerHTML='';if(!history.length){histList.innerHTML='<div class="empty-history">No periods logged yet.</div>';return;}history.forEach((h,i)=>{const prev=history[i+1];let t='latest';if(prev){const g=Math.round((new Date(h.date)-new Date(prev.date))/86400000);t=g+'d cycle';}const el=document.createElement('div');el.className='history-item';el.innerHTML='<span class="history-dot"></span><span class="history-date">'+new Date(h.date).toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric'})+'</span><span class="history-len">'+t+'</span><button class="history-del" data-idx="'+i+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>';histList.appendChild(el);});histList.querySelectorAll('.history-del').forEach(b=>b.addEventListener('click',()=>{history.splice(+b.dataset.idx,1);safeSet('sakhi_period_history',JSON.stringify(history));cycleLengths=computeCycleLengths();renderHistory();renderAlgoLab();renderPatterns();showToast('Entry removed');}));}
 renderHistory();
@@ -402,8 +391,7 @@ function renderPatterns(){const list=document.getElementById('patternList');list
 renderPatterns();
 document.getElementById('periodDate').value=today.toISOString().slice(0,10);
 document.getElementById('addPeriodBtn').addEventListener('click',()=>{const dv=document.getElementById('periodDate').value;const lv=parseInt(document.getElementById('periodLength').value,10);if(!dv){showToast('Pick a date');return;}if(!lv||lv<1||lv>15){showToast('Duration 1-15');return;}if(history.some(h=>h.date===dv)){showToast('Already logged');return;}history.push({date:dv,length:lv});history.sort((a,b)=>new Date(b.date)-new Date(a.date));safeSet('sakhi_period_history',JSON.stringify(history));cycleLengths=computeCycleLengths();renderHistory();renderAlgoLab();renderPatterns();showToast('Period logged 🌸');});
-document.getElementById('runSortBtn').addEventListener('click',()=>{if(cycleLengths.length<3){showToast('Need 3+ cycles');return;}const T=3000,d=cycleLengths.slice();let t0=performance.now();for(let i=0;i<T;i++)mergeSort(d,(a,b)=>a-b);const mm=(performance.now()-t0)/T;let br;t0=performance.now();for(let i=0;i<T;i++)br=bubbleSort(d,(a,b)=>a-b);const bm=(performance.now()-t0)/T;document.getElementById('mergeTime').innerHTML=mm.toFixed(4)+'<small>ms</small>';document.getElementById('bubbleTime').innerHTML=bm.toFixed(4)+'<small>ms</small>';document.getElementById('mergeMeta').textContent='n = '+d.length+', O(n log n)';document.getElementById('bubbleMeta').textContent='n = '+d.length+', comp = '+br.comparisons;document.getElementById('mergeBox').classList.toggle('winner',mm<=bm);document.getElementById('bubbleBox').classList.toggle('winner',bm<mm);document.getElementById('sortVerdict').innerHTML='<strong>Merge Sort</strong> ran <strong>'+(bm/mm).toFixed(1)+'×</strong> faster than Bubble Sort.';const v=document.getElementById('sortVisual');v.innerHTML='';const sd=mergeSort(d,(a,b)=>a-b);const mx=Math.max(...sd);sd.forEach(x=>{const b=document.createElement('div');b.className='sort-bar';b.style.height=(x/mx*100)+'%';v.appendChild(b);});});
-document.getElementById('runSearchBtn').addEventListener('click',()=>{const t=parseInt(document.getElementById('searchTarget').value,10);if(!t||t<10||t>60){showToast('Enter 10-60');return;}if(cycleLengths.length<2){showToast('Add cycles first');return;}const lin=linearSearch(cycleLengths,t);const s=mergeSort(cycleLengths,(a,b)=>a-b);const bin=binarySearch(s,t);document.getElementById('linearResult').textContent=lin.found?'Found at index '+lin.index:'Not found';document.getElementById('linearMeta').textContent=lin.steps+' comparisons · O(n)';document.getElementById('binaryResult').textContent=bin.found?'Found at index '+bin.index:'Not found';document.getElementById('binaryMeta').textContent=bin.steps+' comparisons · O(log n)';});
+
 document.getElementById('logoutBtn').addEventListener('click',()=>{try{localStorage.removeItem('sakhi_logged_in');localStorage.removeItem('sakhi_remember');}catch(e){}window.location.href='login.html';});
 function showToast(m){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
 </script>

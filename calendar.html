@@ -104,6 +104,7 @@ body{font-family:'Outfit',sans-serif;background:#fff7fb;color:#4a2340;display:fl
   <a class="nav active">📅 Calendar</a>
   <a class="nav" href="insights.html">📈 Insights</a>
   <a class="nav" href="settings.html">⚙️ Settings</a>
+  <a class="nav" href="algo-demo.html">💻 Algorithm Demos</a>
   <div class="user">
     <strong id="uName">User</strong>
     <span id="uTag">normal</span>
@@ -186,14 +187,7 @@ let symptoms = get('sakhi_symptoms',{});
 function load(){
   const raw = get('sakhi_period_history',null);
   if(Array.isArray(raw)&&raw.length) return raw;
-  const seed = [];
-  for(let i=6;i>=1;i--){
-    const d = new Date(today);
-    d.setDate(d.getDate()-i*CFG.cycle+Math.round((Math.random()-0.5)*3));
-    seed.push({date:ymd(d),length:CFG.period});
-  }
-  set('sakhi_period_history',seed);
-  return seed;
+  return []; // Return empty if no history
 }
 let history = load();
 history.sort((a,b)=>new Date(b.date)-new Date(a.date));
@@ -216,7 +210,7 @@ function buildIntervals(){
   return merged;
 }
 let intervals = buildIntervals();
-let lastPeriod = history.length ? strip(new Date(history[0].date)) : today;
+let lastPeriod = history.length ? strip(new Date(history[0].date)) : null;
 
 function avgCycle(){
   if(history.length<2) return CFG.cycle;
@@ -246,7 +240,7 @@ function inPeriod(date){
 }
 
 function predict(date){
-  if(date<lastPeriod) return null;
+  if(!lastPeriod || date<lastPeriod) return null;
   const diff = Math.round((strip(date)-lastPeriod)/MS);
   const mod = ((diff%effCycle)+effCycle)%effCycle;
   const day = mod+1;
@@ -327,10 +321,14 @@ function updateSummary(){
   document.getElementById('sFertile').textContent = f+' days';
   document.getElementById('sOv').textContent = ov ? ov.toLocaleDateString('en-US',{day:'numeric',month:'short'}) : '—';
 
-  let next = add(lastPeriod,effCycle);
-  while(next<today) next = add(next,effCycle);
-  const toNext = Math.round((next-today)/MS);
-  document.getElementById('sNext').textContent = toNext===0 ? 'Today' : toNext+' days';
+  if (lastPeriod) {
+    let next = add(lastPeriod,effCycle);
+    while(next<today) next = add(next,effCycle);
+    const toNext = Math.round((next-today)/MS);
+    document.getElementById('sNext').textContent = toNext===0 ? 'Today' : toNext+' days';
+  } else {
+    document.getElementById('sNext').textContent = '—';
+  }
 
   const topMood = Object.entries(moodCount).sort((a,b)=>b[1]-a[1])[0];
   const topSymptom = Object.entries(symptomCount).sort((a,b)=>b[1]-a[1])[0];

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sakhi · Algorithm Demos</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--pink:#ff6b9d;--purple:#b06bd6;--rose-deep:#c9427e;--text:#4a2340;--muted:#a5839a;--line:#f7dce9;--line-soft:#fbeaf3;--error:#e5484d;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+body{font-family:'Outfit',system-ui,sans-serif;background:#fff7fb;color:var(--text);min-height:100vh;overflow:hidden;}
+.shell{display:flex;height:100vh;}
+.sidebar{width:236px;flex-shrink:0;background:linear-gradient(180deg,#fff8fc,#fff1f8);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:22px 16px 18px;overflow-y:auto;}
+.logo{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:700;color:#8e2b5c;padding:0 6px;margin-bottom:26px;}
+.logo-mark{width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,var(--pink),var(--purple));display:grid;place-items:center;box-shadow:0 8px 18px -6px rgba(255,107,157,.85);}
+.logo-mark svg{width:18px;height:18px;}
+.nav-section{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.2px;color:#c8a0ba;padding:0 10px;margin:14px 0 8px;}
+.nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:11px;font-size:13.5px;font-weight:500;color:#8a5c7c;text-decoration:none;cursor:pointer;transition:all .18s;margin-bottom:2px;}
+.nav-item svg{width:17px;height:17px;flex-shrink:0;}
+.nav-item:hover{background:#ffeef6;color:var(--rose-deep);}
+.nav-item.active{background:linear-gradient(100deg,#ffd6e8,#f2d5f7);color:#8e2b5c;font-weight:600;}
+.sidebar-foot{margin-top:auto;padding-top:18px;}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;}
+.topbar{display:flex;align-items:center;gap:16px;padding:20px 28px 16px;flex-shrink:0;}
+.topbar h1{font-size:22px;font-weight:600;color:#5c2a4c;margin-bottom:3px;}
+.topbar h1 span{background:linear-gradient(90deg,#e8558f,#a855f7);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.topbar p{font-size:12.5px;color:var(--muted);}
+.content{flex:1;overflow-y:auto;padding:0 28px 28px;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 10px 28px -20px rgba(201,66,126,.35);}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px;}
+.card-title{font-size:13.5px;font-weight:600;color:#7c3a5c;display:flex;align-items:center;gap:7px;}
+.card-title svg{width:15px;height:15px;color:var(--pink);}
+.card-tag{font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;padding:3px 9px;border-radius:99px;background:#ffeef6;color:var(--rose-deep);white-space:nowrap;}
+.card-tag.algo{background:linear-gradient(100deg,#ffd6e8,#f2d5f7);color:#8e2b5c;font-family:'JetBrains Mono',monospace;}
+.btn-primary{padding:11px 20px;font-family:inherit;font-size:13.5px;font-weight:600;color:#fff;background:linear-gradient(100deg,#ff7fa9,#f26aa0,#b06bd6);border:none;border-radius:11px;cursor:pointer;}
+.btn-ghost{padding:8px 14px;font-family:inherit;font-size:12px;font-weight:500;color:#8a5c7c;background:#fff8fb;border:1px solid var(--line);border-radius:9px;cursor:pointer;}
+.algo-lab{grid-column:1/span 2;background:linear-gradient(150deg,#fff8fc,#fff 40%,#fdf4ff);border:1.5px dashed #f9c4dd;}
+.algo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:6px;}
+.algo-box{background:#fff;border:1px solid var(--line-soft);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:8px;}
+.algo-name{font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:600;color:#8e2b5c;}
+.algo-complexity{font-family:'JetBrains Mono',monospace;font-size:10px;padding:2px 7px;border-radius:6px;background:#ffeef6;color:var(--rose-deep);align-self:flex-start;font-weight:500;}
+.algo-result{font-size:19px;font-weight:700;color:#5c2a4c;}
+.algo-result small{font-size:11px;font-weight:500;color:#a5839a;margin-left:2px;}
+.algo-note{font-size:11px;color:#b0809e;line-height:1.45;}
+.sort-race{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.race-box{padding:13px;border-radius:13px;background:#fff8fb;border:1px solid var(--line-soft);text-align:center;}
+.race-box.winner{background:linear-gradient(150deg,#e3f9ee,#d5f5e3);border-color:#a5e5c4;}
+.race-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:#8a5c7c;margin-bottom:6px;}
+.race-time{font-size:22px;font-weight:700;color:#5c2a4c;letter-spacing:-1px;}
+.race-time small{font-size:11px;font-weight:500;color:#a5839a;margin-left:2px;}
+.race-sub{font-size:10.5px;color:#b0809e;margin-top:4px;font-family:'JetBrains Mono',monospace;}
+.sort-visual{display:flex;align-items:flex-end;gap:3px;height:70px;padding:10px 8px;background:#fff8fb;border-radius:11px;border:1px solid var(--line-soft);margin-bottom:10px;}
+.sort-bar{flex:1;border-radius:3px 3px 0 0;background:linear-gradient(180deg,#ffb3d1,#b06bd6);min-height:2px;transition:height .3s;}
+.search-form{display:flex;gap:8px;margin-bottom:12px;}
+.search-form input{flex:1;padding:10px 13px;font-family:inherit;font-size:13px;background:#fff8fb;border:1.5px solid var(--line);border-radius:11px;outline:none;}
+.search-form input:focus{border-color:var(--pink);box-shadow:0 0 0 4px rgba(255,107,157,.14);background:#fff;}
+.search-results{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.search-box{padding:11px 12px;border-radius:11px;background:#fff8fb;border:1px solid var(--line-soft);}
+.sb-name{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#8a5c7c;margin-bottom:5px;}
+.sb-value{font-size:15px;font-weight:700;color:#5c2a4c;}
+.sb-hint{font-size:10.5px;color:#b0809e;margin-top:3px;}
+.toast{position:fixed;top:22px;left:50%;transform:translate(-50%,-130%);z-index:99;display:flex;align-items:center;gap:11px;padding:13px 20px;background:#fff;border-radius:14px;box-shadow:0 20px 46px -14px rgba(201,66,126,.45);font-size:13.5px;font-weight:500;color:var(--text);transition:transform .45s cubic-bezier(.2,1.3,.4,1);}
+.toast.show{transform:translate(-50%,0);}
+@media(max-width:900px){.grid{grid-template-columns:1fr;}.algo-lab{grid-column:1;}.algo-grid{grid-template-columns:repeat(2,1fr);}}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast">
+  <span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+  <span id="toastMsg">Saved!</span>
+</div>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="logo">
+      <span class="logo-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2.5c3.5 3 6 6.2 6 9.6a6 6 0 0 1-12 0c0-3.4 2.5-6.6 6-9.6z"/><path d="M12 18.5v3"/>
+        </svg>
+      </span>
+      Sakhi
+    </div>
+    <div class="nav-section">Menu</div>
+    <a class="nav-item" href="dashboard.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+      Dashboard
+    </a>
+    <a class="nav-item" href="chatbot.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Health Assistant
+    </a>
+    <a class="nav-item" href="calendar.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Calendar
+    </a>
+    <a class="nav-item" href="insights.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+      Insights
+    </a>
+    <a class="nav-item" href="settings.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Settings
+    </a>
+    <div class="nav-section">Developer</div>
+    <a class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Algorithm Demos
+    </a>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h1>Algorithm <span>Demos</span></h1>
+        <p>AOA Project Visualizations (Sorting &amp; Searching).</p>
+      </div>
+    </header>
+    <div class="content">
+      <div class="grid">
+        <div class="card algo-lab">
+          <div class="card-head">
+            <div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.3h6c0-1 .4-1.8 1-2.3A7 7 0 0 0 12 2z"/></svg>Algorithm Lab — cycle analysis</div>
+            <span class="card-tag algo">4 algorithms</span>
+          </div>
+          <div class="algo-grid">
+            <div class="algo-box"><div class="algo-name">Moving Average</div><div class="algo-complexity">O(n)</div><div class="algo-result" id="algoAvg">—<small>days</small></div><div class="algo-note">Rolling mean of last 3 cycles</div></div>
+            <div class="algo-box"><div class="algo-name">Min · Max · Median</div><div class="algo-complexity">O(n log n)</div><div class="algo-result" id="algoMinMax">—</div><div class="algo-note" id="algoMinMaxNote">After Merge Sort</div></div>
+            <div class="algo-box"><div class="algo-name">Pattern Detection</div><div class="algo-complexity">O(n)</div><div class="algo-result" id="algoVariability">—</div><div class="algo-note" id="algoVariabilityNote">Std deviation</div></div>
+            <div class="algo-box"><div class="algo-name">Prediction</div><div class="algo-complexity">O(n)</div><div class="algo-result" id="algoPredict">—</div><div class="algo-note" id="algoPredictNote">Next cycle estimate</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M6 12h12M10 18h4"/></svg>Sorting race — Merge vs Bubble</div>
+            <button class="btn-ghost" id="runSortBtn">Run race</button>
+          </div>
+          <div class="sort-race">
+            <div class="race-box" id="mergeBox"><div class="race-label">Merge Sort · O(n log n)</div><div class="race-time" id="mergeTime">—<small>ms</small></div><div class="race-sub" id="mergeMeta">—</div></div>
+            <div class="race-box" id="bubbleBox"><div class="race-label">Bubble Sort · O(n²)</div><div class="race-time" id="bubbleTime">—<small>ms</small></div><div class="race-sub" id="bubbleMeta">—</div></div>
+          </div>
+          <div class="sort-visual" id="sortVisual"></div>
+          <div class="algo-note" id="sortVerdict" style="text-align:center;">Click <em>Run race</em> to compare both sort algorithms.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Search — Linear vs Binary</div>
+            <span class="card-tag algo">O(n) vs O(log n)</span>
+          </div>
+          <div class="search-form">
+            <input type="number" id="searchTarget" placeholder="Enter a cycle length (e.g. 28)" min="10" max="60">
+            <button class="btn-primary" id="runSearchBtn">Search</button>
+          </div>
+          <div class="search-results">
+            <div class="search-box"><div class="sb-name">Linear Search</div><div class="sb-value" id="linearResult">—</div><div class="sb-hint" id="linearMeta">—</div></div>
+            <div class="search-box"><div class="sb-name">Binary Search</div><div class="sb-value" id="binaryResult">—</div><div class="sb-hint" id="binaryMeta">—</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+function safeJSON(k,f){try{return JSON.parse(localStorage.getItem(k))||f;}catch(e){return f;}}
+function showToast(m){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
+function mergeSort(a,c){if(a.length<=1)return a;const m=Math.floor(a.length/2);const L=mergeSort(a.slice(0,m),c);const R=mergeSort(a.slice(m),c);const o=[];let i=0,j=0;while(i<L.length&&j<R.length){if(c(L[i],R[j])<=0)o.push(L[i++]);else o.push(R[j++]);}while(i<L.length)o.push(L[i++]);while(j<R.length)o.push(R[j++]);return o;}
+function bubbleSort(a,c){const x=a.slice();let comp=0,sw=0;for(let i=0;i<x.length-1;i++){let s=false;for(let j=0;j<x.length-1-i;j++){comp++;if(c(x[j],x[j+1])>0){[x[j],x[j+1]]=[x[j+1],x[j]];sw++;s=true;}}if(!s)break;}return{sorted:x,comparisons:comp,swaps:sw};}
+function linearSearch(a,t){let s=0;for(let i=0;i<a.length;i++){s++;if(a[i]===t)return{found:true,index:i,steps:s};}return{found:false,index:-1,steps:s};}
+function binarySearch(a,t){let lo=0,hi=a.length-1,s=0;while(lo<=hi){s++;const m=Math.floor((lo+hi)/2);if(a[m]===t)return{found:true,index:m,steps:s};if(a[m]<t)lo=m+1;else hi=m-1;}return{found:false,index:-1,steps:s};}
+function movingAverage(a,w=3){if(!a.length)return 0;const s=a.slice(-w);return s.reduce((x,y)=>x+y,0)/s.length;}
+function stats(s){if(!s.length)return{min:0,max:0,median:0};const m=Math.floor(s.length/2);return{min:s[0],max:s[s.length-1],median:s.length%2?s[m]:(s[m-1]+s[m])/2};}
+function stdDev(a){if(a.length<2)return 0;const m=a.reduce((x,y)=>x+y,0)/a.length;return Math.sqrt(a.reduce((s,x)=>s+(x-m)**2,0)/a.length);}
+
+let history = safeJSON('sakhi_period_history',[]);
+history.sort((a,b)=>new Date(b.date)-new Date(a.date));
+function computeCycleLengths(){const c=history.slice().sort((a,b)=>new Date(a.date)-new Date(b.date));const L=[];for(let i=1;i<c.length;i++){const d=Math.round((new Date(c[i].date)-new Date(c[i-1].date))/86400000);if(d>5&&d<90)L.push(d);}return L;}
+let cycleLengths = computeCycleLengths();
+if(cycleLengths.length<5) cycleLengths = [28,29,27,31,28,30,28]; // Fake data just for demo purposes
+
+function renderAlgoLab(){
+  const l=cycleLengths,n=l.length,avg=movingAverage(l,3);
+  document.getElementById('algoAvg').innerHTML=(n?avg.toFixed(1):'—')+'<small>days</small>';
+  if(n){
+    const s=mergeSort(l,(a,b)=>a-b);
+    const st=stats(s);
+    document.getElementById('algoMinMax').textContent=st.min+' · '+st.median+' · '+st.max;
+    document.getElementById('algoMinMaxNote').textContent='Min · Median · Max (n='+n+')';
+  }else{
+    document.getElementById('algoMinMax').textContent='—';
+    document.getElementById('algoMinMaxNote').textContent='Need ≥ 2 cycles';
+  }
+  const sd=stdDev(l);
+  let lv='—';
+  if(n>=2){if(sd<2)lv='Very stable';else if(sd<4)lv='Stable';else if(sd<7)lv='Variable';else lv='Irregular';}
+  document.getElementById('algoVariability').textContent=lv;
+  document.getElementById('algoVariabilityNote').textContent=n>=2?'σ = '+sd.toFixed(2)+' days':'Need ≥ 2 cycles';
+  if(n>=1){
+    document.getElementById('algoPredict').textContent=Math.round(avg)+'d';
+    document.getElementById('algoPredictNote').textContent='MA of last 3 cycles';
+  }else{
+    document.getElementById('algoPredict').textContent='—';
+    document.getElementById('algoPredictNote').textContent='Need ≥ 1 cycle';
+  }
+}
+renderAlgoLab();
+
+document.getElementById('runSortBtn').addEventListener('click',()=>{
+  const T=3000,d=cycleLengths.slice();
+  let t0=performance.now();
+  for(let i=0;i<T;i++)mergeSort(d,(a,b)=>a-b);
+  const mm=(performance.now()-t0)/T;
+  let br;
+  t0=performance.now();
+  for(let i=0;i<T;i++)br=bubbleSort(d,(a,b)=>a-b);
+  const bm=(performance.now()-t0)/T;
+  document.getElementById('mergeTime').innerHTML=mm.toFixed(4)+'<small>ms</small>';
+  document.getElementById('bubbleTime').innerHTML=bm.toFixed(4)+'<small>ms</small>';
+  document.getElementById('mergeMeta').textContent='n = '+d.length+', O(n log n)';
+  document.getElementById('bubbleMeta').textContent='n = '+d.length+', comp = '+br.comparisons;
+  document.getElementById('mergeBox').classList.toggle('winner',mm<=bm);
+  document.getElementById('bubbleBox').classList.toggle('winner',bm<mm);
+  document.getElementById('sortVerdict').innerHTML='<strong>Merge Sort</strong> ran <strong>'+(bm/mm).toFixed(1)+'×</strong> faster than Bubble Sort.';
+  const v=document.getElementById('sortVisual');
+  v.innerHTML='';
+  const sd=mergeSort(d,(a,b)=>a-b);
+  const mx=Math.max(...sd);
+  sd.forEach(x=>{
+    const b=document.createElement('div');
+    b.className='sort-bar';
+    b.style.height=(x/mx*100)+'%';
+    v.appendChild(b);
+  });
+});
+
+document.getElementById('runSearchBtn').addEventListener('click',()=>{
+  const t=parseInt(document.getElementById('searchTarget').value,10);
+  if(!t||t<10||t>60){showToast('Enter 10-60');return;}
+  const lin=linearSearch(cycleLengths,t);
+  const s=mergeSort(cycleLengths,(a,b)=>a-b);
+  const bin=binarySearch(s,t);
+  document.getElementById('linearResult').textContent=lin.found?'Found at index '+lin.index:'Not found';
+  document.getElementById('linearMeta').textContent=lin.steps+' comparisons · O(n)';
+  document.getElementById('binaryResult').textContent=bin.found?'Found at index '+bin.index:'Not found';
+  document.getElementById('binaryMeta').textContent=bin.steps+' comparisons · O(log n)';
+});
+</script>
+</body>
+</html>
