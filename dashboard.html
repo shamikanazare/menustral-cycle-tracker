@@ -92,6 +92,12 @@ body{font-family:'Outfit',system-ui,sans-serif;background:#fff7fb;color:var(--te
 .history-del svg{width:12px;height:12px;}
 .empty-history{text-align:center;padding:22px 10px;font-size:12.5px;color:#c8a0ba;line-height:1.6;}
 .algo-lab{grid-column:1/span 4;background:linear-gradient(150deg,#fff8fc,#fff 40%,#fdf4ff);border:1.5px dashed #f9c4dd;}
+.wellness-card{grid-column:1/span 4;background:linear-gradient(150deg,#fff8fc,#fff 40%,#fdf4ff);}
+.wellness-list{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:4px;}
+.wellness-item{background:#fff;border:1px solid var(--line-soft);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px;}
+.wellness-icon{font-size:22px;}
+.wellness-title{font-size:12px;font-weight:600;color:#7c3a5c;}
+.wellness-text{font-size:11px;color:#b0809e;line-height:1.5;}
 .algo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:6px;}
 .algo-box{background:#fff;border:1px solid var(--line-soft);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:8px;}
 .algo-name{font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:600;color:#8e2b5c;}
@@ -277,20 +283,13 @@ body{font-family:'Outfit',system-ui,sans-serif;background:#fff7fb;color:var(--te
           <div class="history-list" id="historyList"></div>
         </div>
 
-        <div class="card algo-lab">
+        <div class="card wellness-card">
           <div class="card-head">
-            <div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.3h6c0-1 .4-1.8 1-2.3A7 7 0 0 0 12 2z"/></svg>Algorithm Lab — cycle analysis</div>
-            <span class="card-tag algo">4 algorithms</span>
+            <div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5c3.5 3 6 6.2 6 9.6a6 6 0 0 1-12 0c0-3.4 2.5-6.6 6-9.6z"/></svg>Wellness Tips</div>
+            <span class="card-tag" id="wellnessPhaseTag">—</span>
           </div>
-          <div class="algo-grid">
-            <div class="algo-box"><div class="algo-name">Moving Average</div><div class="algo-complexity">O(n)</div><div class="algo-result" id="algoAvg">—<small>days</small></div><div class="algo-note">Rolling mean of last 3 cycles</div></div>
-            <div class="algo-box"><div class="algo-name">Min · Max · Median</div><div class="algo-complexity">O(n log n)</div><div class="algo-result" id="algoMinMax">—</div><div class="algo-note" id="algoMinMaxNote">After Merge Sort</div></div>
-            <div class="algo-box"><div class="algo-name">Pattern Detection</div><div class="algo-complexity">O(n)</div><div class="algo-result" id="algoVariability">—</div><div class="algo-note" id="algoVariabilityNote">Std deviation</div></div>
-            <div class="algo-box"><div class="algo-name">Prediction</div><div class="algo-complexity">O(n)</div><div class="algo-result" id="algoPredict">—</div><div class="algo-note" id="algoPredictNote">Next cycle estimate</div></div>
-          </div>
+          <div class="wellness-list" id="wellnessList"></div>
         </div>
-
-
 
         <div class="card pattern-card">
           <div class="card-head">
@@ -302,11 +301,7 @@ body{font-family:'Outfit',system-ui,sans-serif;background:#fff7fb;color:var(--te
         <div class="card chat-link-card">
           <div class="card-title" style="font-size:14px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Health Assistant</div>
           <h3>Ask about PCOS, PCOD, or your cycle.</h3>
-          <p>A keyword-scored chatbot built with <strong>Naive</strong> and <strong>KMP string matching</strong>.</p>
-          <div class="chat-tags">
-            <span class="chat-tag">Naive O(n·m)</span>
-            <span class="chat-tag">KMP O(n+m)</span>
-          </div>
+          <p>Get instant answers about your menstrual health, symptoms, and what to expect during each phase.</p>
           <a href="chatbot.html" class="btn-primary" style="text-decoration:none;display:inline-block;margin-top:4px;">Open Health Assistant →</a>
         </div>
 
@@ -385,8 +380,48 @@ else {document.getElementById('statOvulation').textContent='—';document.getEle
 const histList=document.getElementById('historyList');
 function renderHistory(){document.getElementById('historyCount').textContent=history.length+' '+(history.length===1?'entry':'entries');histList.innerHTML='';if(!history.length){histList.innerHTML='<div class="empty-history">No periods logged yet.</div>';return;}history.forEach((h,i)=>{const prev=history[i+1];let t='latest';if(prev){const g=Math.round((new Date(h.date)-new Date(prev.date))/86400000);t=g+'d cycle';}const el=document.createElement('div');el.className='history-item';el.innerHTML='<span class="history-dot"></span><span class="history-date">'+new Date(h.date).toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric'})+'</span><span class="history-len">'+t+'</span><button class="history-del" data-idx="'+i+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>';histList.appendChild(el);});histList.querySelectorAll('.history-del').forEach(b=>b.addEventListener('click',()=>{history.splice(+b.dataset.idx,1);safeSet('sakhi_period_history',JSON.stringify(history));cycleLengths=computeCycleLengths();renderHistory();renderAlgoLab();renderPatterns();showToast('Entry removed');}));}
 renderHistory();
-function renderAlgoLab(){const l=cycleLengths,n=l.length,avg=movingAverage(l,3);document.getElementById('algoAvg').innerHTML=(n?avg.toFixed(1):'—')+'<small>days</small>';if(n){const s=mergeSort(l,(a,b)=>a-b);const st=stats(s);document.getElementById('algoMinMax').textContent=st.min+' · '+st.median+' · '+st.max;document.getElementById('algoMinMaxNote').textContent='Min · Median · Max (n='+n+')';}else{document.getElementById('algoMinMax').textContent='—';document.getElementById('algoMinMaxNote').textContent='Need ≥ 2 cycles';}const sd=stdDev(l);let lv='—';if(n>=2){if(sd<2)lv='Very stable';else if(sd<4)lv='Stable';else if(sd<7)lv='Variable';else lv='Irregular';}document.getElementById('algoVariability').textContent=lv;document.getElementById('algoVariabilityNote').textContent=n>=2?'σ = '+sd.toFixed(2)+' days':'Need ≥ 2 cycles';if(n>=1){document.getElementById('algoPredict').textContent=Math.round(avg)+'d';document.getElementById('algoPredictNote').textContent='MA of last 3 cycles';}else{document.getElementById('algoPredict').textContent='—';document.getElementById('algoPredictNote').textContent='Need ≥ 1 cycle';}}
+function renderAlgoLab(){const l=cycleLengths,n=l.length,avg=movingAverage(l,3);if(!document.getElementById('algoAvg'))return;}
 renderAlgoLab();
+const WELLNESS={
+  period:{tag:'Menstrual Phase',tips:[
+    {icon:'🛁',title:'Rest & Restore',text:'Take warm baths to ease cramps. Use a heating pad on your lower abdomen.'},
+    {icon:'🍫',title:'Iron-Rich Foods',text:'Eat spinach, lentils, and dark chocolate to replenish lost iron during your period.'},
+    {icon:'🧘',title:'Gentle Movement',text:'Light yoga or stretching helps reduce cramps and improve mood. Skip intense workouts.'},
+    {icon:'💊',title:'Stay Hydrated',text:'Drink plenty of water. Reducing salt helps with bloating during your period.'}
+  ]},
+  follicular:{tag:'Follicular Phase',tips:[
+    {icon:'⚡',title:'High Energy Time',text:'Your energy is rising! Great time to start new projects, workouts, and social plans.'},
+    {icon:'🥗',title:'Light Fresh Foods',text:'Focus on salads, seeds (flaxseed, pumpkin), and fermented foods to support estrogen.'},
+    {icon:'🏃',title:'Cardio & Strength',text:'Your body recovers faster now. Ideal phase for high-intensity workouts and strength training.'},
+    {icon:'✨',title:'Skin Glow',text:'Estrogen peaks making your skin look its best. Great time for any big events or photos!'}
+  ]},
+  ovulation:{tag:'Ovulation Day',tips:[
+    {icon:'💜',title:'Peak Confidence',text:'You feel and look your best today. Estrogen and testosterone are at their highest.'},
+    {icon:'🫐',title:'Antioxidant Foods',text:'Eat berries, leafy greens, and foods rich in Zinc to support the ovulation process.'},
+    {icon:'🏋️',title:'Push Your Limits',text:'Your pain tolerance is highest around ovulation. Try your hardest workout of the month.'},
+    {icon:'💬',title:'Communicate',text:'Your verbal and social skills peak now. Best time for important conversations or presentations.'}
+  ]},
+  fertile:{tag:'Fertile Window',tips:[
+    {icon:'🌸',title:'Stay Active',text:'Moderate exercise is great now. Your body is in its most energetic and social phase.'},
+    {icon:'🥑',title:'Healthy Fats',text:'Eat avocados, nuts, and olive oil to support hormone production during the fertile window.'},
+    {icon:'💧',title:'Cervical Health',text:'Staying well hydrated supports healthy cervical mucus during your fertile window.'},
+    {icon:'🌿',title:'Reduce Stress',text:'High stress can affect ovulation. Practice mindfulness, meditation, or deep breathing.'}
+  ]},
+  luteal:{tag:'Luteal Phase',tips:[
+    {icon:'🍌',title:'Magnesium & B6',text:'Eat bananas, oats, and nuts to ease PMS symptoms like irritability and bloating.'},
+    {icon:'😴',title:'Prioritise Sleep',text:'You may feel more tired. Aim for 8 hours of sleep. Avoid caffeine after 2 PM.'},
+    {icon:'🚶',title:'Moderate Exercise',text:'Stick to walking, pilates, or yoga. Intense exercise can worsen PMS for some people.'},
+    {icon:'🍵',title:'Herbal Teas',text:'Chamomile and ginger teas can ease bloating, cramps, and mood swings before your period.'}
+  ]}
+};
+function renderWellnessTips(){
+  const data = WELLNESS[phase] || WELLNESS.follicular;
+  document.getElementById('wellnessPhaseTag').textContent = data.tag;
+  document.getElementById('wellnessList').innerHTML = data.tips.map(t=>
+    `<div class="wellness-item"><div class="wellness-icon">${t.icon}</div><div class="wellness-title">${t.title}</div><div class="wellness-text">${t.text}</div></div>`
+  ).join('');
+}
+renderWellnessTips();
 function renderPatterns(){const list=document.getElementById('patternList');list.innerHTML='';if(cycleLengths.length<2){list.innerHTML='<div class="pattern-item"><div class="pi-icon info">ℹ️</div><div><div class="pi-title">Not enough data yet</div><div class="pi-text">Add at least 2 period start dates.</div></div></div>';return;}const s=mergeSort(cycleLengths,(a,b)=>a-b);const st=stats(s);const sd=stdDev(cycleLengths);let ic='good',ti='Very stable cycle',tx='';if(sd<2){tx='Your cycles vary by only ~'+sd.toFixed(1)+' days.';}else if(sd<4){tx='Variation of ~'+sd.toFixed(1)+' days is within normal range.';}else if(sd<7){ic='warn';ti='Variable cycle';tx='Variation of ~'+sd.toFixed(1)+' days.';}else{ic='warn';ti='Irregular cycle';tx='Variation of ~'+sd.toFixed(1)+' days. Consider talking to a professional.';}list.innerHTML+='<div class="pattern-item"><div class="pi-icon '+ic+'">'+(ic==='good'?'✅':'⚠️')+'</div><div><div class="pi-title">'+ti+'</div><div class="pi-text">'+tx+'</div></div></div>';list.innerHTML+='<div class="pattern-item"><div class="pi-icon info">📊</div><div><div class="pi-title">Range: '+st.min+'–'+st.max+' days</div><div class="pi-text">Median: '+st.median+'d</div></div></div>';}
 renderPatterns();
 document.getElementById('periodDate').value=today.toISOString().slice(0,10);
