@@ -43,12 +43,22 @@ body{font-family:'Outfit',sans-serif;background:#fff7fb;color:#4a2340;display:fl
 .day.predicted{background:#fff2f8;color:#c9427e;border:1.5px dashed #ffb3d1;font-weight:600;}
 .day.fertile{background:#f3e6ff;color:#7c3a9e;font-weight:600;}
 .day.ovulation{background:linear-gradient(135deg,#c9a3f0,#b06bd6);color:#fff;font-weight:700;}
+.day.has-intimacy::after{content:'👶';position:absolute;top:2px;right:2px;font-size:9px;line-height:1;}
+.day.ovulation:not(.has-intimacy)::after{content:'✨';position:absolute;top:2px;right:2px;font-size:9px;line-height:1;}
 .day.today{border-color:#ff6b9d;font-weight:700;}
 .day-num{font-size:13px;line-height:1;}
 .day-dot{width:5px;height:5px;border-radius:50%;background:#c9427e;display:none;margin-top:1px;}
 .day.has-log .day-dot{display:block;}
 .day.ovulation .day-dot{background:#fff;}
 .day.period .day-dot{background:#8e2b5c;}
+
+.bbt-input-wrap{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+.bbt-input-wrap input{flex:1;padding:8px 12px;border:1.5px solid #f7dce9;border-radius:10px;font-family:inherit;font-size:13px;background:#fff8fb;outline:none;}
+.bbt-input-wrap input:focus{border-color:#ff6b9d;background:#fff;}
+.bbt-unit{font-size:12px;color:#a5839a;font-weight:600;}
+.intimacy-toggle-btn{width:100%;padding:10px 14px;border:1.5px solid #f7dce9;border-radius:12px;background:#fff8fb;font-family:inherit;font-size:12px;font-weight:600;color:#7c3a5c;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:14px;transition:all .18s;}
+.intimacy-toggle-btn:hover{background:#fff2f8;border-color:#ffb3d1;}
+.intimacy-toggle-btn.selected{background:linear-gradient(135deg,#ffd6e8,#f2d5f7);border-color:#ff6b9d;color:#8e2b5c;}
 
 .legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:14px;padding-top:12px;border-top:1px solid #fbeaf3;font-size:11px;color:#8a5c7c;}
 .legend span{display:inline-block;width:12px;height:12px;border-radius:4px;margin-right:5px;vertical-align:-2px;}
@@ -131,17 +141,19 @@ body{font-family:'Outfit',sans-serif;background:#fff7fb;color:#4a2340;display:fl
       <div class="legend">
         <span><span class="p"></span>Period</span>
         <span><span class="pr"></span>Predicted</span>
-        <span><span class="f"></span>Fertile</span>
-        <span><span class="o"></span>Ovulation</span>
+        <span><span class="f"></span>Fertile Stage</span>
+        <span><span class="o"></span>Peak Ovulation ✨</span>
+        <span>👶 Conceive/Intercourse Logged</span>
       </div>
     </div>
 
     <div class="card side">
       <h3>This month</h3>
       <div class="row"><span class="lbl">Period days</span><span class="val" id="sPeriod">—</span></div>
-      <div class="row"><span class="lbl">Fertile days</span><span class="val" id="sFertile">—</span></div>
-      <div class="row"><span class="lbl">Ovulation</span><span class="val" id="sOv">—</span></div>
+      <div class="row"><span class="lbl">Fertile stage</span><span class="val" id="sFertile">—</span></div>
+      <div class="row"><span class="lbl">Peak Ovulation ✨</span><span class="val" id="sOv">—</span></div>
       <div class="row"><span class="lbl">Next period</span><span class="val" id="sNext">—</span></div>
+      <div class="row"><span class="lbl">Conceive days logged 👶</span><span class="val" id="sIntimacy">—</span></div>
       <div class="row"><span class="lbl">Top mood 😊</span><span class="val" id="sTopMood">—</span></div>
       <div class="row"><span class="lbl">Top symptom</span><span class="val" id="sTopSymptom">—</span></div>
       <button class="add-btn" id="addBtn">+ Log period</button>
@@ -281,7 +293,11 @@ function render(){
     const cls = classify(date);
     if(cls) btn.classList.add(cls);
     if(same(date,today)) btn.classList.add('today');
-    if(symptoms[ymd(date)]) btn.classList.add('has-log');
+    const log = symptoms[ymd(date)];
+    if(log){
+      btn.classList.add('has-log');
+      if(log.intercourse) btn.classList.add('has-intimacy');
+    }
 
     const numSpan = document.createElement('span');
     numSpan.className = 'day-num';
@@ -300,7 +316,7 @@ function render(){
 }
 
 function updateSummary(){
-  let p=0,f=0,ov=null;
+  let p=0,f=0,ov=null,intimacyCount=0;
   const total = new Date(vY,vM+1,0).getDate();
   const moodCount={}, symptomCount={};
 
@@ -315,11 +331,14 @@ function updateSummary(){
     if(log){
       if(log.mood) moodCount[log.mood]=(moodCount[log.mood]||0)+1;
       (log.symptoms||[]).forEach(s=>{ symptomCount[s]=(symptomCount[s]||0)+1; });
+      if(log.intercourse) intimacyCount++;
     }
   }
   document.getElementById('sPeriod').textContent = p+' days';
   document.getElementById('sFertile').textContent = f+' days';
   document.getElementById('sOv').textContent = ov ? ov.toLocaleDateString('en-US',{day:'numeric',month:'short'}) : '—';
+  const intEl = document.getElementById('sIntimacy');
+  if(intEl) intEl.textContent = intimacyCount > 0 ? intimacyCount + ' days' : 'None yet';
 
   if (lastPeriod) {
     let next = add(lastPeriod,effCycle);
@@ -377,7 +396,7 @@ function openModal(date){
   selected = date;
   const cls = classify(date);
   mTitle.textContent = date.toLocaleDateString('en-US',{weekday:'long',day:'numeric',month:'long'});
-  const labels = {period:'Period day 🩸',predicted:'Predicted period',ovulation:'Ovulation day ✨',fertile:'Fertile window 🌿'};
+  const labels = {period:'Period day 🩸',predicted:'Predicted period',ovulation:'Peak Ovulation Day ✨ (Highest Conception Chance)',fertile:'Fertile Stage 🌸 (Prime Conceive Window)'};
   mSub.textContent = labels[cls] || 'Regular day';
   mBody.innerHTML = '';
 
@@ -411,6 +430,44 @@ function openModal(date){
   flowGroup.className = 'flow-grid';
   mBody.appendChild(flowGroup);
 
+  // — Fertility & Conception Signs (For Married / Conceiving) —
+  const divFert = document.createElement('div');
+  divFert.className = 'modal-divider';
+  mBody.appendChild(divFert);
+
+  const fertHead = document.createElement('span');
+  fertHead.className = 'section-lbl';
+  fertHead.style.color = '#8e2b5c';
+  fertHead.textContent = '👶 Conception & Fertility Signs';
+  mBody.appendChild(fertHead);
+
+  const cervLbl = document.createElement('span');
+  cervLbl.className = 'section-lbl';
+  cervLbl.textContent = 'Cervical Fluid';
+  mBody.appendChild(cervLbl);
+  const CERVICAL_LIST = ['Dry','Sticky','Creamy','Egg-white ✨'];
+  const cervGroup = makeChipGroup(CERVICAL_LIST, existingLog.cervical || null, false);
+  cervGroup.id = 'cervGroup';
+  cervGroup.className = 'flow-grid';
+  mBody.appendChild(cervGroup);
+
+  const bbtLbl = document.createElement('span');
+  bbtLbl.className = 'section-lbl';
+  bbtLbl.textContent = 'Basal Body Temp (BBT)';
+  mBody.appendChild(bbtLbl);
+  const bbtWrap = document.createElement('div');
+  bbtWrap.className = 'bbt-input-wrap';
+  bbtWrap.innerHTML = `<input type="number" step="0.1" id="bbtInput" placeholder="e.g. 97.8 or 36.6" value="${existingLog.bbt || ''}"><span class="bbt-unit">°F / °C</span>`;
+  mBody.appendChild(bbtWrap);
+
+  const intBtn = document.createElement('button');
+  intBtn.type = 'button';
+  intBtn.id = 'intimacyBtn';
+  intBtn.className = 'intimacy-toggle-btn' + (existingLog.intercourse ? ' selected' : '');
+  intBtn.innerHTML = `👶 Intercourse Logged (Trying to Conceive)`;
+  intBtn.addEventListener('click',()=>intBtn.classList.toggle('selected'));
+  mBody.appendChild(intBtn);
+
   // Divider
   const div1 = document.createElement('div');
   div1.className = 'modal-divider';
@@ -419,7 +476,7 @@ function openModal(date){
   // Save log button
   const saveBtn = document.createElement('button');
   saveBtn.className = 'modal-btn save';
-  saveBtn.textContent = existingLog.mood||existingLog.symptoms?.length||existingLog.flow ? 'Update Log 🌸' : 'Save Log 🌸';
+  saveBtn.textContent = existingLog.mood||existingLog.symptoms?.length||existingLog.flow||existingLog.intercourse ? 'Update Log 🌸' : 'Save Log 🌸';
   saveBtn.onclick = saveLog;
   mBody.appendChild(saveBtn);
 
@@ -475,7 +532,19 @@ function saveLog(){
   const flowSel = document.querySelector('#flowGroup .chip-btn.selected');
   const flow = flowSel ? flowSel.textContent.trim() : '';
 
-  symptoms[d] = {mood, symptoms:syms, flow};
+  // Read cervical
+  const cervSel = document.querySelector('#cervGroup .chip-btn.selected');
+  const cervical = cervSel ? cervSel.textContent.replace(/[^\w\s]/g,'').trim() : '';
+
+  // Read BBT
+  const bbtInput = document.getElementById('bbtInput');
+  const bbt = bbtInput ? bbtInput.value.trim() : '';
+
+  // Read intercourse
+  const intBtn = document.getElementById('intimacyBtn');
+  const intercourse = intBtn ? intBtn.classList.contains('selected') : false;
+
+  symptoms[d] = {mood, symptoms:syms, flow, cervical, bbt, intercourse};
   set('sakhi_symptoms', symptoms);
   render();
   closeModal();

@@ -97,7 +97,22 @@ body{font-family:'Outfit',system-ui,sans-serif;background:#fff7fb;color:var(--te
 .wellness-item{background:#fff;border:1px solid var(--line-soft);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px;}
 .wellness-icon{font-size:22px;}
 .wellness-title{font-size:12px;font-weight:600;color:#7c3a5c;}
-.wellness-text{font-size:11px;color:#b0809e;line-height:1.5;}
+.ttc-card{grid-column:1/span 4;background:linear-gradient(150deg,#fff8fc,#fbf2ff 45%,#fff);border:1.5px solid #ecd6f7;}
+.ttc-badge{padding:4px 12px;border-radius:99px;font-size:11.5px;font-weight:700;display:inline-flex;align-items:center;gap:6px;letter-spacing:.3px;}
+.ttc-badge.peak{background:linear-gradient(100deg,#f3e6ff,#ffd6e8);color:#7c3a9e;border:1px solid #dcb5f5;box-shadow:0 4px 12px rgba(176,107,214,.25);}
+.ttc-badge.high{background:#e3f9ee;color:#0f766e;border:1px solid #a7f3d0;}
+.ttc-badge.med{background:#fff8e6;color:#b45309;border:1px solid #fde68a;}
+.ttc-badge.low{background:#fdf2f8;color:#a2668a;border:1px solid #f9c4dd;}
+.ttc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0;}
+.ttc-box{background:#fff;border:1px solid var(--line-soft);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:5px;box-shadow:0 4px 14px -6px rgba(201,66,126,.08);}
+.ttc-box-lbl{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#a5839a;display:flex;align-items:center;gap:5px;}
+.ttc-box-val{font-size:17px;font-weight:700;color:#5c2a4c;}
+.ttc-box-hint{font-size:11px;color:#b0809e;line-height:1.4;}
+.ttc-banner{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding-top:14px;border-top:1px solid #f8e1ee;}
+.ttc-tip{background:#fff;border:1px solid #fbeaf3;border-radius:12px;padding:10px 12px;font-size:11px;color:#7c3a5c;line-height:1.45;}
+.ttc-tip strong{color:#8e2b5c;display:block;margin-bottom:2px;}
+.ttc-toggle-btn{padding:5px 12px;border:1px solid #dcb5f5;background:#fff;border-radius:99px;font-family:inherit;font-size:11px;font-weight:600;color:#7c3a9e;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .18s;}
+.ttc-toggle-btn:hover{background:#f8efff;}
 .algo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:6px;}
 .algo-box{background:#fff;border:1px solid var(--line-soft);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:8px;}
 .algo-name{font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:600;color:#8e2b5c;}
@@ -142,9 +157,9 @@ body{font-family:'Outfit',system-ui,sans-serif;background:#fff7fb;color:var(--te
 .toast.show{transform:translate(-50%,0);}
 .toast .tick{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--purple));display:grid;place-items:center;}
 .toast .tick svg{width:14px;height:14px;}
-@media (max-width:1100px){.grid{grid-template-columns:repeat(2,1fr);}.hero-card{grid-column:1/span 2;grid-row:auto;}.add-card,.history-card,.algo-lab,.sort-compare,.search-demo,.pattern-card,.chat-link-card{grid-column:1/span 2;}.algo-grid{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:1100px){.grid{grid-template-columns:repeat(2,1fr);}.hero-card{grid-column:1/span 2;grid-row:auto;}.ttc-card{grid-column:1/span 2;}.ttc-grid,.ttc-banner{grid-template-columns:repeat(2,1fr);}.add-card,.history-card,.algo-lab,.sort-compare,.search-demo,.pattern-card,.chat-link-card{grid-column:1/span 2;}.algo-grid{grid-template-columns:repeat(2,1fr);}}
 @media (max-width:820px){.sidebar{position:fixed;left:-260px;top:0;bottom:0;z-index:50;transition:left .3s;}.sidebar.open{left:0;}.menu-btn{display:grid !important;}}
-@media (max-width:640px){.topbar{padding:16px 18px 12px;}.content{padding:0 18px 22px;}.grid{grid-template-columns:1fr;}.hero-card,.add-card,.history-card,.algo-lab,.sort-compare,.search-demo,.pattern-card,.chat-link-card{grid-column:1;}.add-form{grid-template-columns:1fr;}.algo-grid{grid-template-columns:1fr 1fr;}.chip{display:none;}}
+@media (max-width:640px){.topbar{padding:16px 18px 12px;}.content{padding:0 18px 22px;}.grid{grid-template-columns:1fr;}.hero-card,.ttc-card,.add-card,.history-card,.algo-lab,.sort-compare,.search-demo,.pattern-card,.chat-link-card{grid-column:1;}.ttc-grid,.ttc-banner{grid-template-columns:1fr;}.add-form{grid-template-columns:1fr;}.algo-grid{grid-template-columns:1fr 1fr;}.chip{display:none;}}
 .menu-btn{display:none;width:36px;height:36px;border-radius:11px;border:1px solid var(--line);background:#fff;cursor:pointer;place-items:center;color:#8a5c7c;flex-shrink:0;}
 .menu-btn svg{width:17px;height:17px;}
 </style>
@@ -283,6 +298,66 @@ body{font-family:'Outfit',system-ui,sans-serif;background:#fff7fb;color:var(--te
           <div class="history-list" id="historyList"></div>
         </div>
 
+        <!-- CONCEPTION & FERTILE STAGE HUB (FOR MARRIED WOMEN / TTC) -->
+        <div class="card ttc-card" id="ttcCard">
+          <div class="card-head">
+            <div class="card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a9 9 0 0 0 9-9c0-4.97-4.03-9-9-9s-9 4.03-9 9a9 9 0 0 0 9 9z"/><path d="M12 7v5l3 3"/></svg>
+              Fertility &amp; Conception Hub <span style="font-size:12px;color:#a5839a;font-weight:400;">(Married / Family Planning)</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span class="ttc-badge" id="ttcChanceBadge">Calculating...</span>
+              <button class="ttc-toggle-btn" id="ttcModeBtn" title="Toggle Married/TTC Mode">👶 Mode: <span id="ttcModeLabel">TTC Active</span></button>
+            </div>
+          </div>
+
+          <div class="ttc-grid">
+            <div class="ttc-box">
+              <div class="ttc-box-lbl">✨ Today's Conception Chance</div>
+              <div class="ttc-box-val" id="ttcScoreVal">—</div>
+              <div class="ttc-box-hint" id="ttcScoreHint">Log period start dates to predict your conception odds.</div>
+            </div>
+
+            <div class="ttc-box">
+              <div class="ttc-box-lbl">🌸 Fertile Stage (6 Days)</div>
+              <div class="ttc-box-val" id="ttcFertileWindowVal">—</div>
+              <div class="ttc-box-hint" id="ttcFertileWindowHint">Prime window for sperm viability &amp; conception.</div>
+            </div>
+
+            <div class="ttc-box">
+              <div class="ttc-box-lbl">💜 Peak Ovulation Day</div>
+              <div class="ttc-box-val" id="ttcPeakOvuVal">—</div>
+              <div class="ttc-box-hint" id="ttcPeakOvuHint">Egg released; viable for 12–24 hours.</div>
+            </div>
+
+            <div class="ttc-box">
+              <div class="ttc-box-lbl">🍼 Estimated Due Date</div>
+              <div class="ttc-box-val" id="ttcDueDateVal">—</div>
+              <div class="ttc-box-hint" id="ttcDueDateHint">Arrival if conceived during this fertile stage.</div>
+            </div>
+          </div>
+
+          <!-- Married Women Conception Guidance -->
+          <div class="ttc-banner">
+            <div class="ttc-tip">
+              <strong>🕒 Intercourse Timing</strong>
+              Have intercourse every 1–2 days during your fertile window, especially 2 days before ovulation.
+            </div>
+            <div class="ttc-tip">
+              <strong>✨ Cervical Mucus</strong>
+              Clear, slippery, "egg-white" cervical fluid indicates peak fertility and aids sperm movement.
+            </div>
+            <div class="ttc-tip">
+              <strong>🌡️ Basal Body Temp (BBT)</strong>
+              A sustained 0.5°F–1°F temperature shift confirms ovulation has just taken place.
+            </div>
+            <div class="ttc-tip">
+              <strong>💊 Pre-Pregnancy Care</strong>
+              Start 400 mcg Folic Acid daily to support neural tube development when trying to conceive.
+            </div>
+          </div>
+        </div>
+
         <div class="card wellness-card">
           <div class="card-head">
             <div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5c3.5 3 6 6.2 6 9.6a6 6 0 0 1-12 0c0-3.4 2.5-6.6 6-9.6z"/></svg>Wellness Tips</div>
@@ -378,7 +453,7 @@ if(daysToOvu===0){document.getElementById('statOvulation').textContent='Today';d
 else if(daysToOvu!==null){document.getElementById('statOvulation').textContent=daysToOvu+'d';document.getElementById('statOvulationHint').textContent=ovuDate.toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric'});}
 else {document.getElementById('statOvulation').textContent='—';document.getElementById('statOvulationHint').textContent='No data yet';}
 const histList=document.getElementById('historyList');
-function renderHistory(){document.getElementById('historyCount').textContent=history.length+' '+(history.length===1?'entry':'entries');histList.innerHTML='';if(!history.length){histList.innerHTML='<div class="empty-history">No periods logged yet.</div>';return;}history.forEach((h,i)=>{const prev=history[i+1];let t='latest';if(prev){const g=Math.round((new Date(h.date)-new Date(prev.date))/86400000);t=g+'d cycle';}const el=document.createElement('div');el.className='history-item';el.innerHTML='<span class="history-dot"></span><span class="history-date">'+new Date(h.date).toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric'})+'</span><span class="history-len">'+t+'</span><button class="history-del" data-idx="'+i+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>';histList.appendChild(el);});histList.querySelectorAll('.history-del').forEach(b=>b.addEventListener('click',()=>{history.splice(+b.dataset.idx,1);safeSet('sakhi_period_history',JSON.stringify(history));cycleLengths=computeCycleLengths();renderHistory();renderAlgoLab();renderPatterns();showToast('Entry removed');}));}
+function renderHistory(){document.getElementById('historyCount').textContent=history.length+' '+(history.length===1?'entry':'entries');histList.innerHTML='';if(!history.length){histList.innerHTML='<div class="empty-history">No periods logged yet.</div>';return;}history.forEach((h,i)=>{const prev=history[i+1];let t='latest';if(prev){const g=Math.round((new Date(h.date)-new Date(prev.date))/86400000);t=g+'d cycle';}const el=document.createElement('div');el.className='history-item';el.innerHTML='<span class="history-dot"></span><span class="history-date">'+new Date(h.date).toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric'})+'</span><span class="history-len">'+t+'</span><button class="history-del" data-idx="'+i+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>';histList.appendChild(el);});histList.querySelectorAll('.history-del').forEach(b=>b.addEventListener('click',()=>{history.splice(+b.dataset.idx,1);safeSet('sakhi_period_history',JSON.stringify(history));cycleLengths=computeCycleLengths();renderHistory();renderAlgoLab();renderPatterns();if(typeof renderTTC==='function')renderTTC();showToast('Entry removed');}));}
 renderHistory();
 function renderAlgoLab(){const l=cycleLengths,n=l.length,avg=movingAverage(l,3);if(!document.getElementById('algoAvg'))return;}
 renderAlgoLab();
@@ -422,10 +497,119 @@ function renderWellnessTips(){
   ).join('');
 }
 renderWellnessTips();
+function renderTTC(){
+  const isTTC = (user.goal || 'ttc') === 'ttc';
+  const modeLbl = document.getElementById('ttcModeLabel');
+  if(modeLbl) modeLbl.textContent = isTTC ? 'TTC Active' : 'General Mode';
+
+  let nextOvu = null;
+  if (history.length) {
+    nextOvu = new Date(history[0].date);
+    nextOvu.setHours(0,0,0,0);
+    nextOvu.setDate(nextOvu.getDate() + OV - 1);
+    while (nextOvu < today && Math.round((today - nextOvu)/86400000) > 1) {
+      nextOvu.setDate(nextOvu.getDate() + CFG.cycleLength);
+    }
+  }
+
+  const badge = document.getElementById('ttcChanceBadge');
+  const scoreVal = document.getElementById('ttcScoreVal');
+  const scoreHint = document.getElementById('ttcScoreHint');
+  const winVal = document.getElementById('ttcFertileWindowVal');
+  const winHint = document.getElementById('ttcFertileWindowHint');
+  const ovuVal = document.getElementById('ttcPeakOvuVal');
+  const ovuHint = document.getElementById('ttcPeakOvuHint');
+  const dueVal = document.getElementById('ttcDueDateVal');
+  const dueHint = document.getElementById('ttcDueDateHint');
+
+  if (!history.length) {
+    badge.className = 'ttc-badge low';
+    badge.textContent = 'Awaiting Period Log';
+    scoreVal.textContent = '—';
+    scoreHint.textContent = 'Log your period start date to calculate your fertile stage and conception odds.';
+    winVal.textContent = '—';
+    winHint.textContent = 'Estimated 6-day fertile window';
+    ovuVal.textContent = '—';
+    ovuHint.textContent = 'Egg viability window (12–24h)';
+    dueVal.textContent = '—';
+    dueHint.textContent = 'Estimated delivery if conceived';
+    return;
+  }
+
+  const fStart = new Date(nextOvu);
+  fStart.setDate(fStart.getDate() - 5);
+  const fEnd = new Date(nextOvu);
+  fEnd.setDate(fEnd.getDate() + 1);
+
+  winVal.textContent = fStart.toLocaleDateString('en-US',{month:'short',day:'numeric'}) + ' – ' + fEnd.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  winHint.textContent = 'Best 6 days to conceive (Sperm viability + Ovulation)';
+
+  const daysToO = Math.round((nextOvu - today)/86400000);
+  ovuVal.textContent = nextOvu.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  if (daysToO === 0) {
+    ovuHint.textContent = '🌟 Ovulating today! Egg viable for 12–24h';
+  } else if (daysToO > 0) {
+    ovuHint.textContent = `In ${daysToO} days · Intercourse recommended 1–2 days prior`;
+  } else {
+    ovuHint.textContent = 'Ovulation just passed for this cycle';
+  }
+
+  const estDue = new Date(nextOvu);
+  estDue.setDate(estDue.getDate() + 266);
+  dueVal.textContent = '~' + estDue.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  dueHint.textContent = 'Predicted due date if pregnancy occurs this cycle';
+
+  const diffToOvu = cycleDay - OV;
+  if (diffToOvu === 0) {
+    badge.className = 'ttc-badge peak';
+    badge.textContent = '⭐ Peak Chance (33%)';
+    scoreVal.textContent = 'Peak (~33%)';
+    scoreHint.textContent = 'Ovulation day! The egg is released and fertile for 12–24h. Prime time for intercourse.';
+  } else if (diffToOvu === -1) {
+    badge.className = 'ttc-badge peak';
+    badge.textContent = '🔥 Very High (31%)';
+    scoreVal.textContent = 'Very High (~31%)';
+    scoreHint.textContent = '1 day before ovulation. Highest statistical probability of conception.';
+  } else if (diffToOvu === -2) {
+    badge.className = 'ttc-badge high';
+    badge.textContent = '✨ High Chance (27%)';
+    scoreVal.textContent = 'High (~27%)';
+    scoreHint.textContent = '2 days before ovulation. Prime fertile stage; sperm survives in cervical mucus.';
+  } else if (diffToOvu === -3) {
+    badge.className = 'ttc-badge high';
+    badge.textContent = '🌿 Good Chance (16%)';
+    scoreVal.textContent = 'Good (~16%)';
+    scoreHint.textContent = '3 days before ovulation. Fertile window is actively open.';
+  } else if (diffToOvu === -4 || diffToOvu === -5) {
+    badge.className = 'ttc-badge med';
+    badge.textContent = '💧 Moderate (10%)';
+    scoreVal.textContent = 'Moderate (~10%)';
+    scoreHint.textContent = 'Beginning of fertile window. Good time to begin having intercourse every 1–2 days.';
+  } else if (diffToOvu === 1) {
+    badge.className = 'ttc-badge med';
+    badge.textContent = '⏳ Closing Window (8%)';
+    scoreVal.textContent = 'Moderate (~8%)';
+    scoreHint.textContent = 'Post-ovulation day. Conception possible if egg was released late.';
+  } else {
+    badge.className = 'ttc-badge low';
+    badge.textContent = '🌙 Low Chance (< 2%)';
+    scoreVal.textContent = 'Low (< 2%)';
+    scoreHint.textContent = 'Outside fertile stage. Body is in menstrual/luteal recovery phase.';
+  }
+}
+renderTTC();
+
+document.getElementById('ttcModeBtn').addEventListener('click', ()=>{
+  user.goal = (user.goal === 'general') ? 'ttc' : 'general';
+  safeSet('sakhi_user', JSON.stringify(user));
+  renderTTC();
+  showToast(user.goal === 'ttc' ? 'Married / TTC Conception Mode Active 👶' : 'General Tracker Mode Active 🌸');
+});
+
 function renderPatterns(){const list=document.getElementById('patternList');list.innerHTML='';if(cycleLengths.length<2){list.innerHTML='<div class="pattern-item"><div class="pi-icon info">ℹ️</div><div><div class="pi-title">Not enough data yet</div><div class="pi-text">Add at least 2 period start dates.</div></div></div>';return;}const s=mergeSort(cycleLengths,(a,b)=>a-b);const st=stats(s);const sd=stdDev(cycleLengths);let ic='good',ti='Very stable cycle',tx='';if(sd<2){tx='Your cycles vary by only ~'+sd.toFixed(1)+' days.';}else if(sd<4){tx='Variation of ~'+sd.toFixed(1)+' days is within normal range.';}else if(sd<7){ic='warn';ti='Variable cycle';tx='Variation of ~'+sd.toFixed(1)+' days.';}else{ic='warn';ti='Irregular cycle';tx='Variation of ~'+sd.toFixed(1)+' days. Consider talking to a professional.';}list.innerHTML+='<div class="pattern-item"><div class="pi-icon '+ic+'">'+(ic==='good'?'✅':'⚠️')+'</div><div><div class="pi-title">'+ti+'</div><div class="pi-text">'+tx+'</div></div></div>';list.innerHTML+='<div class="pattern-item"><div class="pi-icon info">📊</div><div><div class="pi-title">Range: '+st.min+'–'+st.max+' days</div><div class="pi-text">Median: '+st.median+'d</div></div></div>';}
 renderPatterns();
 document.getElementById('periodDate').value=today.toISOString().slice(0,10);
-document.getElementById('addPeriodBtn').addEventListener('click',()=>{const dv=document.getElementById('periodDate').value;const lv=parseInt(document.getElementById('periodLength').value,10);if(!dv){showToast('Pick a date');return;}if(!lv||lv<1||lv>15){showToast('Duration 1-15');return;}if(history.some(h=>h.date===dv)){showToast('Already logged');return;}history.push({date:dv,length:lv});history.sort((a,b)=>new Date(b.date)-new Date(a.date));safeSet('sakhi_period_history',JSON.stringify(history));cycleLengths=computeCycleLengths();renderHistory();renderAlgoLab();renderPatterns();showToast('Period logged 🌸');});
+document.getElementById('addPeriodBtn').addEventListener('click',()=>{const dv=document.getElementById('periodDate').value;const lv=parseInt(document.getElementById('periodLength').value,10);if(!dv){showToast('Pick a date');return;}if(!lv||lv<1||lv>15){showToast('Duration 1-15');return;}if(history.some(h=>h.date===dv)){showToast('Already logged');return;}history.push({date:dv,length:lv});history.sort((a,b)=>new Date(b.date)-new Date(a.date));safeSet('sakhi_period_history',JSON.stringify(history));cycleLengths=computeCycleLengths();renderHistory();renderAlgoLab();renderPatterns();renderTTC();showToast('Period logged 🌸');});
 
 document.getElementById('logoutBtn').addEventListener('click',()=>{try{localStorage.removeItem('sakhi_logged_in');localStorage.removeItem('sakhi_remember');}catch(e){}window.location.href='login.html';});
 function showToast(m){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}

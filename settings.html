@@ -211,6 +211,37 @@ body{font-family:'Outfit',system-ui,sans-serif;background:#fff7fb;color:var(--te
           <button class="btn-primary" id="saveProfileBtn">Save Profile</button>
         </div>
 
+        <!-- GOAL & MODE CARD (TTC / MARRIED WOMEN MODE) -->
+        <div class="card card-full">
+          <div class="card-head">
+            <div class="card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a9 9 0 0 0 9-9c0-4.97-4.03-9-9-9s-9 4.03-9 9a9 9 0 0 0 9 9z"/><path d="M12 7v5l3 3"/></svg>
+              Tracking Goal &amp; Mode
+            </div>
+            <span style="background:#f3e6ff;color:#7c3a9e;font-weight:600;padding:4px 10px;border-radius:99px;font-size:11px;">Married / Family Planning</span>
+          </div>
+          <p style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.5;">Choose how you want Sakhi to optimize your dashboard, predictions, and fertile stage guidance.</p>
+          <div class="cond-grid">
+            <label class="cond-card">
+              <input type="radio" name="goal" value="general">
+              <div class="cond-inner">
+                <div class="cond-emoji">🌸</div>
+                <div class="cond-title">Cycle Tracker</div>
+                <div class="cond-desc">Track periods, PMS &amp; general cycle phases</div>
+              </div>
+            </label>
+            <label class="cond-card">
+              <input type="radio" name="goal" value="ttc">
+              <div class="cond-inner">
+                <div class="cond-emoji">👶</div>
+                <div class="cond-title">Trying to Conceive (TTC)</div>
+                <div class="cond-desc">Fertile window, peak ovulation &amp; conceive days for married women</div>
+              </div>
+            </label>
+          </div>
+          <button class="btn-primary" id="saveGoalBtn" style="margin-top:14px;">Save Tracking Goal</button>
+        </div>
+
         <!-- CONDITION CARD -->
         <div class="card">
           <div class="card-head">
@@ -307,6 +338,20 @@ document.getElementById('profileWeight').value = user.weightKg || '';
 const cond = (user.condition||'normal').toLowerCase();
 const radio = document.querySelector(`input[name="condition"][value="${cond}"]`);
 if(radio) radio.checked = true;
+
+// Populate goal
+const userGoal = user.goal || 'ttc';
+const goalRadio = document.querySelector(`input[name="goal"][value="${userGoal}"]`);
+if(goalRadio) goalRadio.checked = true;
+
+// Save Goal
+document.getElementById('saveGoalBtn').addEventListener('click',()=>{
+  const selGoal = document.querySelector('input[name="goal"]:checked');
+  if(!selGoal) return;
+  user.goal = selGoal.value;
+  safeSet('sakhi_user', user);
+  showToast(user.goal === 'ttc' ? 'Conception & Married Mode activated 👶' : 'Cycle Tracker Mode saved 🌸');
+});
 
 // Populate cycle inputs
 document.getElementById('cycleLen').value = user.cycleLength || COND_CFG[cond]?.cycleLength || 28;
